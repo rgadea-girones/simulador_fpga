@@ -1,0 +1,7 @@
+# vsim -c work.mi_modulo_top 
+# Start time: 09:32:36 on Apr 30,2026
+# ** Error (suppressible): (vsim-19) Failed to access library './libraries/work/' at "./libraries/work/".
+# No such file or directory. (errno = ENOENT)
+# Error loading design
+# End time: 09:32:37 on Apr 30,2026, Elapsed time: 0:00:01
+# Errors: 1, Warnings: 0

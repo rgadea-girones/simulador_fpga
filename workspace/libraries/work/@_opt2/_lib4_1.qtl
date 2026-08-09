@@ -1,0 +1,235 @@
+m255
+K4
+z2
+Z0 !s12c _opt2
+Z1 !s99 nomlopt
+R0
+R1
+R0
+R1
+R0
+R1
+R0
+R1
+R0
+R1
+R0
+R1
+R0
+R1
+R0
+R1
+R0
+R1
+R0
+R1
+R0
+R1
+R0
+R1
+R0
+R1
+R0
+R1
+Z2 !s12c _opt1
+R1
+R2
+R1
+R2
+R1
+R2
+R1
+R2
+R1
+R2
+R1
+R2
+R1
+!s12c _opt
+R1
+!s11f vlog 2023.3 2023.07, Jul 17 2023
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z3 d/root/simulador_fpga/workspace
+T_opt
+!s110 1777535272
+V3[;EEAHPJJ6lmf;HDX?Zk0
+04 13 4 work mi_modulo_top fast 0
+=1-000ae431a4f1-69f30928-93bb4-1440
+R1
+Z4 !s12b OEM100
+!s124 OEM10U1 
+Z5 o-quiet -auto_acc_if_foreign -work work
+Z6 tCvgOpt 0
+n@_opt
+Z7 OL;O;2023.3;77
+R3
+T_opt1
+!s110 1777629005
+V6]@5a0SXD`aOV1NfV47`U1
+Z8 04 10 4 work top_system fast 0
+=1-000ae431a4f1-69f4774d-5cb2d-5de9
+R1
+R4
+Z9 !s124 OEM10U3 
+R5
+R6
+n@_opt1
+R7
+R3
+T_opt2
+!s110 1778079663
+VUQ7[>zL[hOB9f9BESH;QX0
+R8
+=1-000ae431a4f1-69fb57af-483ff-4b5
+R1
+R4
+R9
+o-quiet -auto_acc_if_foreign -work work +acc
+R6
+n@_opt2
+R7
+vcontador
+Z10 2ejercicio_fsm.v
+Z11 !s110 1778079661
+!i10b 1
+!s100 fFoJ9MdIBAmkbAN<b7Z1a0
+IQYP]bidVQmPBi50<ck0Kj2
+R3
+Z12 w1778079661
+Z13 8ejercicio_fsm.v
+Z14 Fejercicio_fsm.v
+!i122 48
+L0 2 18
+Z15 VDg1SIo80bB@j0V0VzS_@n1
+Z16 OL;L;2023.3;77
+r1
+!s85 0
+31
+!i113 0
+Z17 o-L mtiAvm -L mtiRnm -L mtiOvm -L mtiUvm -L mtiUPF -L infact
+R6
+vcontador_up_down_reducido
+R10
+Z18 !s110 1777992331
+!i10b 1
+!s100 =4^MfYQHPn;M>m<L^5NDg0
+I`o6DF5ZM=IfZ[O^Sje_Di3
+R3
+Z19 w1777992331
+R13
+R14
+!i122 36
+L0 96 46
+R15
+R16
+r1
+!s85 0
+31
+!i113 0
+R17
+R6
+vfsm_control
+R10
+!s110 1777658754
+!i10b 1
+!s100 ^I3^oNXfgNb4g`Y;mkf^K2
+IDT6kWooRah;;[z>52TkFH1
+R3
+w1777658754
+R13
+R14
+!i122 30
+L0 20 58
+R15
+R16
+r1
+!s85 0
+31
+!i113 0
+R17
+R6
+vFSM_MEALY
+R10
+R11
+!i10b 1
+!s100 z5UO3DcMJ<5Z88_zXgHK80
+Ia]ROE[a5eY;50Q_=X@VXh2
+R3
+R12
+R13
+R14
+!i122 48
+L0 20 60
+R15
+R16
+r1
+!s85 0
+31
+!i113 0
+R17
+R6
+n@f@s@m_@m@e@a@l@y
+vmi_modulo_top
+2mi_modulo_top.v
+!s110 1777535089
+!i10b 1
+!s100 SJ?J;>N1L8NT=h9^So7UB1
+IZVmORUc0CA=aOkXMo01U>1
+R3
+w1777534913
+8mi_modulo_top.v
+Fmi_modulo_top.v
+!i122 0
+L0 1 7
+R15
+R16
+r1
+!s85 0
+31
+!i113 0
+R17
+R6
+vtop_solucion
+R10
+R18
+!i10b 1
+!s100 X<8EDH7;QnFAIlYCHfTPP1
+I@VV:7d2j=TFGRLVQkV9Z<3
+R3
+R19
+R13
+R14
+!i122 36
+L0 2 35
+R15
+R16
+r1
+!s85 0
+31
+!i113 0
+R17
+R6
+vtop_system
+R10
+R11
+!i10b 1
+!s100 24b>P`CU2CiZeQ:`nf<RE0
+I43I1><T_B`mGB`Ajaae9V0
+R3
+R12
+R13
+R14
+!i122 48
+L0 83 28
+R15
+R16
+r1
+!s85 0
+31
+!i113 0
+R17
+R6
