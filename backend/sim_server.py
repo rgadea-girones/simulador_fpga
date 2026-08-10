@@ -304,6 +304,50 @@ async def websocket_endpoint(websocket: WebSocket):
             # COMPILACIÓN Y SIMULACIÓN CARGANDO /home/generico/.profile
             # -----------------------------------------------------------
 # -----------------------------------------------------------
+            # LINTER: COMPROBACIÓN DE SINTAXIS (vlog -lint)
+            # -----------------------------------------------------------
+            elif msg.get("accion") == "linter":
+                codigo_design = msg.get("codigo", "")
+                codigo_tb = msg.get("testbench", "")
+
+                with open('../workspace/design.sv', 'w', encoding='utf-8') as f:
+                    f.write(codigo_design)
+                with open('../workspace/testbench.sv', 'w', encoding='utf-8') as f:
+                    f.write(codigo_tb)
+
+                cmd_lint = "bash -c 'source /home/generico/.profile 2>/dev/null; cd ../workspace && vlog -lint -sv design.sv testbench.sv 2>&1'"
+                try:
+                    proc_lint = await asyncio.create_subprocess_shell(
+                        cmd_lint,
+                        stdout=asyncio.subprocess.PIPE,
+                        stderr=asyncio.subprocess.STDOUT
+                    )
+                    stdout_lint, _ = await asyncio.wait_for(
+                        proc_lint.communicate(),
+                        timeout=30.0
+                    )
+                    lint_output = stdout_lint.decode('utf-8', errors='ignore')
+                except asyncio.TimeoutError:
+                    await websocket.send_text(json.dumps({
+                        "status": "error_compilacion",
+                        "detalles": "⚠️ Timeout: El linter tardó demasiado en responder.",
+                        "transcript": "⚠️ Timeout en el linter."
+                    }))
+                    continue
+
+                if proc_lint.returncode != 0:
+                    await websocket.send_text(json.dumps({
+                        "status": "error_compilacion",
+                        "detalles": lint_output,
+                        "transcript": lint_output
+                    }))
+                else:
+                    await websocket.send_text(json.dumps({
+                        "status": "linter_ok",
+                        "transcript": lint_output or "✓ Sintaxis verificada correctamente sin errores."
+                    }))
+
+            # -----------------------------------------------------------
             # COMPILACIÓN Y SIMULACIÓN VÍA WRAPPER BASH
             # -----------------------------------------------------------
             elif msg.get("accion") == "compilar":
@@ -327,7 +371,9 @@ async def websocket_endpoint(websocket: WebSocket):
                     f.write(codigo_tb)
 
                 # 2. Compilar usando bash wrapper
-                cmd_vlog = "bash -c 'source /home/generico/.profile 2>/dev/null; cd ../workspace && vlib work && vlog -sv design.sv testbench.sv'"
+                # Nota: ([ -d work ] && [ -f work/_info ] || vlib work) evita recrear
+                # la librería en cada llamada, lo que ahorra 3-5 segundos por ejecución.
+                cmd_vlog = "bash -c 'source /home/generico/.profile 2>/dev/null; cd ../workspace && ([ -d work ] && [ -f work/_info ] || vlib work) && vlog -sv design.sv testbench.sv'"
                 proc_vlog = await asyncio.create_subprocess_shell(
                     cmd_vlog,
                     stdout=asyncio.subprocess.PIPE,
@@ -383,7 +429,62 @@ async def websocket_endpoint(websocket: WebSocket):
                     "status": "compilado_ok",
                     "transcript": out_text
                 }))
-        # -----------------------------------------------------------
+
+            # -----------------------------------------------------------
+            # SIMULAR: Icarus Verilog (rápido, sin licencias)
+            # iverilog compila en memoria y vvp ejecuta al instante
+            # -----------------------------------------------------------
+            elif msg.get("accion") == "simular":
+                codigo_design = msg.get("codigo", "")
+                codigo_tb = msg.get("testbench", "")
+
+                with open('../workspace/design.sv', 'w', encoding='utf-8') as f:
+                    f.write(codigo_design)
+                with open('../workspace/testbench.sv', 'w', encoding='utf-8') as f:
+                    f.write(codigo_tb)
+
+                # Detectar módulo top del testbench
+                tb_modules = re.findall(r'^\s*module\s+([a-zA-Z0-9_]+)', codigo_tb, re.MULTILINE)
+                design_modules = re.findall(r'^\s*module\s+([a-zA-Z0-9_]+)', codigo_design, re.MULTILINE)
+                if tb_modules:
+                    top_module = tb_modules[-1]
+                elif design_modules:
+                    top_module = design_modules[-1]
+                else:
+                    top_module = "top_system"
+
+                cmd_icarus = f"../workspace/run_icarus.sh {top_module} ../workspace/design.sv ../workspace/testbench.sv"
+                proc_sim = await asyncio.create_subprocess_shell(
+                    cmd_icarus,
+                    stdout=asyncio.subprocess.PIPE,
+                    stderr=asyncio.subprocess.STDOUT
+                )
+                try:
+                    stdout_sim, _ = await asyncio.wait_for(proc_sim.communicate(), timeout=30.0)
+                    out_text = stdout_sim.decode('utf-8', errors='ignore') if stdout_sim else ""
+                except asyncio.TimeoutError:
+                    try:
+                        proc_sim.kill()
+                    except Exception:
+                        pass
+                    out_text = "⚠️ Timeout: la simulación superó 30 segundos (posible bucle infinito en el testbench)."
+
+                if not out_text.strip():
+                    out_text = "⚠️ No se obtuvo salida de la simulación."
+
+                # Distinguir error de compilación de icarus vs ejecución correcta
+                if proc_sim.returncode != 0 and "error" in out_text.lower():
+                    await websocket.send_text(json.dumps({
+                        "status": "error_compilacion",
+                        "detalles": out_text
+                    }))
+                else:
+                    await websocket.send_text(json.dumps({
+                        "status": "simulacion_ok",
+                        "transcript": out_text
+                    }))
+
+            # -----------------------------------------------------------
             # INTERACCIÓN CON INTERRUPTORES / BOTONES
             # -----------------------------------------------------------
             elif msg.get("accion") == "set_sw":

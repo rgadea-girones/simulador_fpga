@@ -1,39 +1,28 @@
-module tb_flipflop_d;
+module tb_fsm;
 
-    logic clk;
-    logic rst_n;
-    logic d;
-    logic q;
+    logic clk, rst_n, bit_in, detect_out;
 
-    flipflop_d uut (
-        .clk   (clk),
-        .rst_n (rst_n),
-        .d     (d),
-        .q     (q)
-    );
+    detector_secuencia_101 uut (.*);
 
     always #5 clk = ~clk;
 
     initial begin
-        clk   = 0;
-        rst_n = 0;
-        d     = 0;
+        $display("=== Simulación FSM Detector '101' ===");
+        $monitor("T=%0t | in=%b state=%b => detect=%b", $time, bit_in, uut.current_state, detect_out);
 
-        $display("=== Inicio de la simulación del Flip-Flop D ===");
+        clk = 0; rst_n = 0; bit_in = 0;
         #12 rst_n = 1;
-        #8 d = 1;
-        #10;
-        $display("T=%0t | D=%b => Q=%b", $time, d, q);
-        #10 d = 0;
-        #10;
-        $display("T=%0t | D=%b => Q=%b", $time, d, q);
-        #5 rst_n = 0;
-        #2;
-        $display("T=%0t | Reset asíncrono activado => Q=%b", $time, q);
-        #10 rst_n = 1;
-        #20;
-        $display("=== Fin de la simulación ===");
-        $finish;
+        
+        // Secuencia input: 0, 1, 0, 1, 1, 0, 1, 0
+        #10 bit_in = 0;
+        #10 bit_in = 1;
+        #10 bit_in = 0;
+        #10 bit_in = 1; // Aquí se detecta 101
+        #10 bit_in = 1; 
+        #10 bit_in = 0;
+        #10 bit_in = 1; // Aquí se detecta otro 101
+        #10 bit_in = 0;
+        
+        #20 $finish;
     end
-
 endmodule
