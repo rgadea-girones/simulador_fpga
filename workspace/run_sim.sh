@@ -24,7 +24,9 @@ EOF
 rm -f sim.log
 
 # 5. Invocación de vsim redirigiendo TTY de forma limpia
-vsim -c -voptargs=+acc -l sim.log -do run.tcl "work.${TOP_MODULE}" < /dev/null > /dev/null 2>&1
+# -voptargs=+acc no es necesario en batch: lo quitamos para reducir el tiempo de
+# optimización interna de vsim (solo es útil en simulación interactiva con señales).
+vsim -c -l sim.log -do run.tcl "work.${TOP_MODULE}" < /dev/null > /dev/null 2>&1
 
 # 6. Devolver el contenido del log a stdout
 if [ -f sim.log ]; then

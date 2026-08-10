@@ -40,7 +40,7 @@
         const spCompilar = document.getElementById('btn-spinner-compilar');
         const txCompilar = document.getElementById('btn-compilar-texto');
         if (spCompilar) spCompilar.style.display = 'none';
-        if (txCompilar) txCompilar.innerText = '⚙️ Compilar';
+        if (txCompilar) txCompilar.innerText = '✅ Verificar';
 
         const spSimular = document.getElementById('btn-spinner-simular');
         const txSimular = document.getElementById('btn-simular-texto');

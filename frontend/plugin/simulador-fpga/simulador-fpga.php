@@ -107,10 +107,10 @@ class SimuladorFPGA_Plugin {
                         🔍 Comprobar (Linter)
                     </button>
 
-                    <!-- Botón Compilar -->
+                    <!-- Botón Verificar -->
                     <button id="btn-compilar" class="sim-btn" style="background-color: #2980b9; color: white;">
                         <span id="btn-spinner-compilar" class="sim-spinner" style="display: none;"></span>
-                        <span id="btn-compilar-texto">⚙️ Compilar</span>
+                        <span id="btn-compilar-texto">✅ Verificar</span>
                     </button>
 
                     <!-- Botón Simular -->
