@@ -3,7 +3,10 @@ import json
 import re
 import os
 import tempfile
-from fastapi import FastAPI, WebSocket
+import httpx
+from fastapi import FastAPI, WebSocket, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 from contextlib import asynccontextmanager
 
 import resource  # <-- LIBRERÍA DE LINUX
@@ -189,9 +192,106 @@ async def generar_esquema_svg(codigo_verilog, modulo_objetivo="auto"):
                 pass
 
 # ==========================================
+# AUTOCOMPLETADO IA (OLLAMA) — auxiliar async
+# ==========================================
+async def generar_completado_ia(websocket, texto: str, completion_id: str):
+    """
+    Llama a Ollama para completar el código SV y devuelve el resultado
+    por el mismo WebSocket sin bloquearlo.
+    """
+    prompt = (
+        "Eres un asistente de código SystemVerilog/Verilog. "
+        "Continúa el siguiente fragmento de código exactamente donde se interrumpe. "
+        "Responde ÚNICAMENTE con el código que viene a continuación, "
+        "sin ninguna explicación, sin bloques markdown, sin texto adicional:\n\n"
+        + texto
+    )
+    try:
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            resp = await client.post(
+                "http://localhost:11434/api/generate",
+                json={"model": "qwen2.5-coder:3b", "prompt": prompt, "stream": False}
+            )
+            data = resp.json()
+            completion = data.get("response", "").strip()
+            # Eliminar bloques markdown si el modelo los incluye
+            completion = re.sub(r'^```[a-zA-Z]*\n?', '', completion)
+            completion = re.sub(r'\n?```$', '', completion).strip()
+    except Exception:
+        completion = ""
+
+    try:
+        await websocket.send_text(json.dumps({
+            "tipo": "autocompletar_respuesta",
+            "completion": completion,
+            "id": completion_id
+        }))
+    except Exception:
+        pass  # WebSocket ya cerrado
+
+
+# ==========================================
 # SERVIDOR FASTAPI Y WEBSOCKETS
 # ==========================================
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["GET", "POST"],
+    allow_headers=["*"],
+)
+
+
+# ==========================================
+# MODELO DE DATOS PARA EL ASISTENTE IA
+# ==========================================
+class PeticionIA(BaseModel):
+    prompt: str
+    codigo: str = ""
+    testbench: str = ""
+
+
+# ==========================================
+# ENDPOINT HTTP: ASISTENTE IA (OLLAMA)
+# ==========================================
+@app.post("/ai")
+async def asistente_ia(peticion: PeticionIA):
+    """Envía la pregunta del usuario a Ollama (qwen2.5-coder:3b) con el código
+    actual como contexto y devuelve la respuesta generada."""
+    system_prompt = (
+        "Eres un asistente experto en diseño digital con SystemVerilog y Verilog. "
+        "Ayudas a estudiantes universitarios a escribir, depurar y entender código HDL. "
+        "Responde siempre en español. Sé conciso y técnico. "
+        "Si el usuario proporciona código, úsalo como contexto para tu respuesta. "
+        "Cuando muestres código, usa bloques ```systemverilog ... ```."
+    )
+
+    contexto = ""
+    if peticion.codigo.strip():
+        contexto += f"\n\n--- Módulo de diseño (design.sv) ---\n```systemverilog\n{peticion.codigo}\n```"
+    if peticion.testbench.strip():
+        contexto += f"\n\n--- Testbench (testbench.sv) ---\n```systemverilog\n{peticion.testbench}\n```"
+
+    prompt_completo = f"{system_prompt}{contexto}\n\nPregunta del estudiante: {peticion.prompt}"
+
+    try:
+        async with httpx.AsyncClient(timeout=120.0) as client:
+            resp = await client.post(
+                "http://localhost:11434/api/generate",
+                json={
+                    "model": "qwen2.5-coder:3b",
+                    "prompt": prompt_completo,
+                    "stream": False
+                }
+            )
+            resp.raise_for_status()
+            data = resp.json()
+            return {"respuesta": data.get("response", "Sin respuesta del modelo.")}
+    except httpx.RequestError as e:
+        raise HTTPException(status_code=503, detail=f"Ollama no disponible: {e}")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error interno: {e}")
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
@@ -483,6 +583,15 @@ async def websocket_endpoint(websocket: WebSocket):
                         "status": "simulacion_ok",
                         "transcript": out_text
                     }))
+
+            # -----------------------------------------------------------
+            # AUTOCOMPLETADO IA CON OLLAMA
+            # -----------------------------------------------------------
+            elif msg.get("accion") == "autocompletar":
+                texto = msg.get("texto", "")
+                completion_id = msg.get("id", "design")
+                # Se lanza como tarea separada para no bloquear el WebSocket
+                asyncio.create_task(generar_completado_ia(websocket, texto, completion_id))
 
             # -----------------------------------------------------------
             # INTERACCIÓN CON INTERRUPTORES / BOTONES

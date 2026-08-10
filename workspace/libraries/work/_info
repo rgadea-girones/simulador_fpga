@@ -343,27 +343,27 @@ R11
 vflipflop_d
 Z35 2design.sv|testbench.sv
 Z36 DXx6 sv_std 3 std 0 22 9oUSJO;AeEaW`l:M@^WG92
-Z37 !s110 1786268503
+Z37 !s110 1786355825
 !i10b 1
 !s100 aFP7n>YO_8PLR6X6Q3B6@2
-If7MZlMH[0X6RkJ7BlGh@C3
+IGdCBbQ9z<`>]OUKUm7Z?i1
 S1
 R6
-Z38 w1786268503
-8design.sv
-Fdesign.sv
-!i122 162
+Z38 w1786355824
+Z39 8design.sv
+Z40 Fdesign.sv
+!i122 165
 L0 1 15
 R20
 R21
 r1
 !s85 0
 31
-Z39 !s108 1786268503.000000
-!s107 testbench.sv|design.sv|
-Z40 !s90 -sv|design.sv|testbench.sv|
+Z41 !s108 1786355825.000000
+Z42 !s107 testbench.sv|design.sv|
+Z43 !s90 -lint|-sv|design.sv|testbench.sv|
 !i113 0
-Z41 o-sv -L mtiAvm -L mtiRnm -L mtiOvm -L mtiUvm -L mtiUPF -L infact
+Z44 o-lint -sv -L mtiAvm -L mtiRnm -L mtiOvm -L mtiUvm -L mtiUPF -L infact
 R11
 vfsm_control
 R15
@@ -435,6 +435,31 @@ r1
 !i113 0
 R25
 R11
+vmux21
+R35
+R36
+Z45 !s110 1786353480
+!i10b 1
+!s100 zVDo324`_hQGSeXha_=RZ0
+IIzn;AYRKCSc[AS0mga<HQ1
+S1
+R6
+Z46 w1786353480
+R39
+R40
+!i122 164
+L0 1 10
+R20
+R21
+r1
+!s85 0
+31
+Z47 !s108 1786353480.000000
+R42
+R43
+!i113 0
+R44
+R11
 vregister
 R15
 R32
@@ -487,24 +512,49 @@ R36
 R37
 !i10b 1
 !s100 [ZIY=o6=JQQMZ^hHab[Wn2
-I11ZFYM0OG;71;;MzoA9Cg2
+IEf=jnTLI`f[iZh56A5gD70
 S1
 R6
 R38
-8testbench.sv
-Ftestbench.sv
-!i122 162
+Z48 8testbench.sv
+Z49 Ftestbench.sv
+!i122 165
 L0 1 39
 R20
 R21
 r1
 !s85 0
 31
-R39
-Z42 !s107 testbench.sv|design.sv|
-R40
-!i113 0
 R41
+R42
+R43
+!i113 0
+R44
+R11
+vtb_mux21
+R35
+R36
+R45
+!i10b 1
+!s100 ab7gVN5M^<XA^CX797QmY3
+IUeV8Zd5oR:a_LfU:f0UD>2
+S1
+R6
+R46
+R48
+R49
+!i122 164
+L0 1 18
+R20
+R21
+r1
+!s85 0
+31
+R47
+R42
+R43
+!i113 0
+R44
 R11
 vtop_solucion
 R15
@@ -552,5 +602,5 @@ r1
 R23
 !s90 -sv|ejercicio_fsm.v|
 !i113 0
-R41
+o-sv -L mtiAvm -L mtiRnm -L mtiOvm -L mtiUvm -L mtiUPF -L infact
 R11

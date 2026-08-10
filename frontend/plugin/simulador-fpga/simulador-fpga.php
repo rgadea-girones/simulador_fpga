@@ -87,11 +87,20 @@ class SimuladorFPGA_Plugin {
         <div class="simulador-fpga-wrapper" style="max-width: 1400px; margin: 20px auto; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
             
             <!-- BARRA SUPERIOR DE ESTADO Y BOTONES -->
-            <div style="background-color: #2c3e50; color: white; padding: 10px 16px; border-radius: 8px 8px 0 0; display: flex; justify-content: space-between; align-items: center; border: 2px solid #333; border-bottom: none; gap: 15px; flex-wrap: nowrap;">
+            <div style="background-color: #2c3e50; color: white; padding: 10px 16px; border-radius: 8px 8px 0 0; display: flex; justify-content: space-between; align-items: center; border: 2px solid #333; border-bottom: none; gap: 15px; flex-wrap: wrap;">
                 
                 <!-- TÍTULO PRINCIPAL (white-space: nowrap evita desbordamientos) -->
                 <div style="font-weight: bold; font-size: 15px; white-space: nowrap; flex-shrink: 0; display: flex; align-items: center; gap: 8px;">
                     🛠️ <span>Entorno de Desarrollo y Simulación SystemVerilog</span>
+                    <select id="ejemplos-basicos" style="margin-left: 15px; font-size: 12px; padding: 4px 8px; border-radius: 4px; background: #34495e; color: white; border: 1px solid #7f8c8d; cursor: pointer;">
+                        <option value="flipflop">Flip-Flop D</option>
+                        <option value="multiplexor">Multiplexor 2:1</option>
+                        <option value="codificador">Codificador de Prioridad</option>
+                        <option value="contador">Contador Síncrono</option>
+                        <option value="registro">Registro de Desplazamiento</option>
+                        <option value="alu">ALU Básica</option>
+                        <option value="fsm">Detector de Secuencia FSM</option>
+                    </select>
                 </div>
 
                 <!-- CONTENEDOR DERECHO: ESTADO Y BOTONES -->

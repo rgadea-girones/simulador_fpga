@@ -1,83 +1,80 @@
 {
   "creator": "Yosys 0.9 (git sha1 1979e0b)",
   "modules": {
-    "flipflop_d": {
+    "mux21": {
       "attributes": {
         "top": 1,
         "src": "design.sv:1"
       },
       "ports": {
-        "clk": {
+        "a": {
           "direction": "input",
           "bits": [ 2 ]
         },
-        "rst_n": {
+        "b": {
           "direction": "input",
           "bits": [ 3 ]
         },
-        "d": {
+        "sel": {
           "direction": "input",
           "bits": [ 4 ]
         },
-        "q": {
+        "y": {
           "direction": "output",
           "bits": [ 5 ]
         }
       },
       "cells": {
-        "$procdff$3": {
+        "$ternary$design.sv:8$1": {
           "hide_name": 1,
-          "type": "$adff",
+          "type": "$mux",
           "parameters": {
-            "ARST_POLARITY": 0,
-            "ARST_VALUE": 0,
-            "CLK_POLARITY": 1,
             "WIDTH": 1
           },
           "attributes": {
             "src": "design.sv:8"
           },
           "port_directions": {
-            "ARST": "input",
-            "CLK": "input",
-            "D": "input",
-            "Q": "output"
+            "A": "input",
+            "B": "input",
+            "S": "input",
+            "Y": "output"
           },
           "connections": {
-            "ARST": [ 3 ],
-            "CLK": [ 2 ],
-            "D": [ 4 ],
-            "Q": [ 5 ]
+            "A": [ 2 ],
+            "B": [ 3 ],
+            "S": [ 4 ],
+            "Y": [ 5 ]
           }
         }
       },
       "netnames": {
-        "clk": {
+        "a": {
           "hide_name": 0,
           "bits": [ 2 ],
           "attributes": {
             "src": "design.sv:2"
           }
         },
-        "d": {
+        "b": {
+          "hide_name": 0,
+          "bits": [ 3 ],
+          "attributes": {
+            "src": "design.sv:3"
+          }
+        },
+        "sel": {
           "hide_name": 0,
           "bits": [ 4 ],
           "attributes": {
             "src": "design.sv:4"
           }
         },
-        "q": {
+        "y": {
           "hide_name": 0,
           "bits": [ 5 ],
           "attributes": {
             "src": "design.sv:5"
-          }
-        },
-        "rst_n": {
-          "hide_name": 0,
-          "bits": [ 3 ],
-          "attributes": {
-            "src": "design.sv:3"
           }
         }
       }
