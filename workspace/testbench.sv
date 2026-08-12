@@ -1,39 +1,16 @@
-module tb_flipflop_d;
-
-    logic clk;
-    logic rst_n;
-    logic d;
-    logic q;
-
-    flipflop_d uut (
-        .clk   (clk),
-        .rst_n (rst_n),
-        .d     (d),
-        .q     (q)
-    );
-
-    always #5 clk = ~clk;
-
+module tb_mailbox_comm;
+    import oop_pkg::*;
     initial begin
-        clk   = 0;
-        rst_n = 0;
-        d     = 0;
-
-        $display("=== Inicio de la simulación del Flip-Flop D ===");
-        #12 rst_n = 1;
-        #8 d = 1;
-        #10;
-        $display("T=%0t | D=%b => Q=%b", $time, d, q);
-        #10 d = 0;
-        #10;
-        $display("T=%0t | D=%b => Q=%b", $time, d, q);
-        #5 rst_n = 0;
-        #2;
-        $display("T=%0t | Reset asíncrono activado => Q=%b", $time, q);
-        #10 rst_n = 1;
-        #20;
-        $display("=== Fin de la simulación ===");
-        $finish;
+        $display("=== Curiosidad: Paso de Objetos vía Mailbox ===");
+        begin
+            mailbox mbx = new(1); // Buzón de tamaño 1
+            Transaccion tx_env = new(77);
+            Transaccion tx_rec;
+            
+            mbx.put(tx_env);
+            mbx.get(tx_rec);
+            
+            $display("Transacción recibida del mailbox exitosamente con ID: %0d", tx_rec.id);
+        end
     end
-
 endmodule

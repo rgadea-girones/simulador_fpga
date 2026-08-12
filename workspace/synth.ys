@@ -1,5 +1,5 @@
 read_verilog -sv design.sv
-hierarchy -top mux21
+hierarchy -top flipflop_d
 proc;
 opt;
 write_json netlist.json

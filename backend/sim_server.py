@@ -512,7 +512,7 @@ async def websocket_endpoint(websocket: WebSocket):
                 try:
                     stdout_sim, stderr_sim = await asyncio.wait_for(
                         proc_sim.communicate(), 
-                        timeout=60.0  # Margen holgado para la validación de licencias en WSL2
+                        timeout=120.0  # Margen holgado para la validación de licencias en WSL2
                     )
                     out_text = stdout_sim.decode('utf-8', errors='ignore') if stdout_sim else ""
                 except asyncio.TimeoutError:
@@ -520,7 +520,7 @@ async def websocket_endpoint(websocket: WebSocket):
                         proc_sim.kill()
                     except Exception: 
                         pass
-                    out_text = "⚠️ Timeout: La simulación ha superado los 60 segundos (revisa si hay un bucle infinito o lentitud en el servidor de licencias)."
+                    out_text = "⚠️ Timeout: La simulación ha superado los 120 segundos (revisa si hay un bucle infinito o lentitud en el servidor de licencias)."
 
                 if not out_text.strip():
                     out_text = "⚠️ No se obtuvo respuesta del script de simulación."

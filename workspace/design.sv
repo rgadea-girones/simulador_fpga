@@ -1,10 +1,9 @@
-module mux21 (
-    input  logic a,
-    input  logic b,
-    input  logic sel,
-    output logic y
-);
-
-    assign y = sel ? b : a;
-
-endmodule
+// Curiosidad 5: Mailbox y Transacciones
+package oop_pkg;
+    class Transaccion;
+        int id;
+        function new(int id);
+            this.id = id;
+        endfunction
+    endclass
+endpackage : oop_pkg

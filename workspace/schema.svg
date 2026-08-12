@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:s="https://github.com/nturley/netlistsvg" width="174" height="184">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:s="https://github.com/nturley/netlistsvg" width="194" height="184">
   <style>svg {
     stroke:#000;
     fill:none;
@@ -23,45 +23,53 @@
   line[class*=","] {
     stroke-width: 3;
   }</style>
-  <g s:type="mux" transform="translate(77,22)" s:width="20" s:height="40" id="cell_$ternary$design.sv:8$1">
-    <s:alias val="$pmux"/>
-    <s:alias val="$mux"/>
-    <s:alias val="$_MUX_"/>
-    <path d="M0,0 L20,10 L20,30 L0,40 Z" class="cell_$ternary$design.sv:8$1" fill="#4A90D9"/>
-    <g s:x="0" s:y="10" s:pid="A"/>
-    <g s:x="0" s:y="30" s:pid="B"/>
-    <g s:x="10" s:y="35" s:pid="S"/>
-    <g s:x="20" s:y="20" s:pid="Y"/>
+  <g s:type="$adff" s:width="40" s:height="57" id="cell_$procdff$3" transform="translate(77,20)">
+    <s:alias val="$adff"/>
+    <s:alias val="$adffe"/>
+    <rect class="netlistsvg_cell" x="0" y="0" width="40" height="50" rx="2" ry="2" fill="#81C784"/>
+    <circle cx="20" cy="53" r="2.5" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+    <path d="M 0 22 L 6 26 L 0 30" fill="none" stroke="#000000" stroke-width="1.5"/>
+    <text class="netlistsvg_text" x="20" y="8" text-anchor="middle" font-size="6px" font-weight="bold">DFF</text>
+    <text class="netlistsvg_text" x="5" y="15" font-size="6px">D</text>
+    <text class="netlistsvg_text" x="8" y="28" font-size="6px">CLK</text>
+    <text class="netlistsvg_text" x="20" y="46" text-anchor="middle" font-size="5px">ARST</text>
+    <text class="netlistsvg_text" x="34" y="15" text-anchor="end" font-size="6px">Q</text>
+    <g s:x="0" s:y="12" s:pid="D"/>
+    <g s:x="0" s:y="26" s:pid="CLK"/>
+    <g s:x="0" s:y="26" s:pid="C"/>
+    <g s:x="20" s:y="57" s:pid="ARST"/>
+    <g s:x="20" s:y="57" s:pid="CLR"/>
+    <g s:x="40" s:y="12" s:pid="Q"/>
   </g>
-  <g s:type="inputExt" transform="translate(12,22)" s:width="30" s:height="20" id="cell_a">
-    <text x="15" y="-4" class="nodelabel cell_a" s:attribute="ref">a</text>
+  <g s:type="inputExt" transform="translate(12,87)" s:width="30" s:height="20" id="cell_clk">
+    <text x="15" y="-4" class="nodelabel cell_clk" s:attribute="ref">clk</text>
     <s:alias val="$_inputExt_"/>
-    <path d="M0,0 L0,20 L15,20 L30,10 L15,0 Z" class="cell_a"/>
+    <path d="M0,0 L0,20 L15,20 L30,10 L15,0 Z" class="cell_clk"/>
     <g s:x="28" s:y="10" s:pid="Y"/>
   </g>
-  <g s:type="inputExt" transform="translate(12,87)" s:width="30" s:height="20" id="cell_b">
-    <text x="15" y="-4" class="nodelabel cell_b" s:attribute="ref">b</text>
+  <g s:type="inputExt" transform="translate(12,152)" s:width="30" s:height="20" id="cell_rst_n">
+    <text x="15" y="-4" class="nodelabel cell_rst_n" s:attribute="ref">rst_n</text>
     <s:alias val="$_inputExt_"/>
-    <path d="M0,0 L0,20 L15,20 L30,10 L15,0 Z" class="cell_b"/>
+    <path d="M0,0 L0,20 L15,20 L30,10 L15,0 Z" class="cell_rst_n"/>
     <g s:x="28" s:y="10" s:pid="Y"/>
   </g>
-  <g s:type="inputExt" transform="translate(12,152)" s:width="30" s:height="20" id="cell_sel">
-    <text x="15" y="-4" class="nodelabel cell_sel" s:attribute="ref">sel</text>
+  <g s:type="inputExt" transform="translate(12,22)" s:width="30" s:height="20" id="cell_d">
+    <text x="15" y="-4" class="nodelabel cell_d" s:attribute="ref">d</text>
     <s:alias val="$_inputExt_"/>
-    <path d="M0,0 L0,20 L15,20 L30,10 L15,0 Z" class="cell_sel"/>
+    <path d="M0,0 L0,20 L15,20 L30,10 L15,0 Z" class="cell_d"/>
     <g s:x="28" s:y="10" s:pid="Y"/>
   </g>
-  <g s:type="outputExt" transform="translate(132,32)" s:width="30" s:height="20" id="cell_y">
-    <text x="15" y="-4" class="nodelabel cell_y" s:attribute="ref">y</text>
+  <g s:type="outputExt" transform="translate(152,22)" s:width="30" s:height="20" id="cell_q">
+    <text x="15" y="-4" class="nodelabel cell_q" s:attribute="ref">q</text>
     <s:alias val="$_outputExt_"/>
-    <path d="M30,0 L30,20 L15,20 L0,10 L15,0 Z" class="cell_y"/>
+    <path d="M30,0 L30,20 L15,20 L0,10 L15,0 Z" class="cell_q"/>
     <g s:x="0" s:y="10" s:pid="A"/>
   </g>
-  <line x1="40" x2="77" y1="32" y2="32" class="net_2"/>
-  <line x1="40" x2="52" y1="97" y2="97" class="net_3"/>
-  <line x1="52" x2="52" y1="97" y2="52" class="net_3"/>
-  <line x1="52" x2="77" y1="52" y2="52" class="net_3"/>
-  <line x1="40" x2="87" y1="162" y2="162" class="net_4"/>
-  <line x1="87" x2="87" y1="162" y2="57" class="net_4"/>
-  <line x1="97" x2="132" y1="42" y2="42" class="net_5"/>
+  <line x1="40" x2="97" y1="162" y2="162" class="net_3"/>
+  <line x1="97" x2="97" y1="162" y2="77" class="net_3"/>
+  <line x1="40" x2="52" y1="97" y2="97" class="net_2"/>
+  <line x1="52" x2="52" y1="97" y2="46" class="net_2"/>
+  <line x1="52" x2="77" y1="46" y2="46" class="net_2"/>
+  <line x1="40" x2="77" y1="32" y2="32" class="net_4"/>
+  <line x1="117" x2="152" y1="32" y2="32" class="net_5"/>
 </svg>
