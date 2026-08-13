@@ -1,5 +1,5 @@
 read_verilog -sv design.sv
-hierarchy -top flipflop_d
+hierarchy -top contador
 proc;
 opt;
 write_json netlist.json

@@ -16,16 +16,16 @@
     function mostrarCargando(tipo) {
         cambiarEstadoBotones(true);
         if (tipo === 'linter') {
-            const btn = document.getElementById('btn-linter');
+            const btn = document.getElementById('fpga-btn-linter');
             if (btn) btn.innerText = '🔍 Comprobando...';
         } else if (tipo === 'compilar') {
-            const sp = document.getElementById('btn-spinner-compilar');
-            const tx = document.getElementById('btn-compilar-texto');
+            const sp = document.getElementById('fpga-btn-spinner-compilar');
+            const tx = document.getElementById('fpga-btn-compilar-texto');
             if (sp) sp.style.display = 'inline-block';
             if (tx) tx.innerText = 'Compilando...';
         } else if (tipo === 'simular') {
-            const sp = document.getElementById('btn-spinner-simular');
-            const tx = document.getElementById('btn-simular-texto');
+            const sp = document.getElementById('fpga-btn-spinner-simular');
+            const tx = document.getElementById('fpga-btn-simular-texto');
             if (sp) sp.style.display = 'inline-block';
             if (tx) tx.innerText = 'Simulando...';
         }
@@ -34,23 +34,23 @@
     function restaurarEstadoBotones() {
         cambiarEstadoBotones(false);
         
-        const btnLinter = document.getElementById('btn-linter');
+        const btnLinter = document.getElementById('fpga-btn-linter');
         if (btnLinter) btnLinter.innerText = '🔍 Comprobando (Linter)';
 
-        const spCompilar = document.getElementById('btn-spinner-compilar');
-        const txCompilar = document.getElementById('btn-compilar-texto');
+        const spCompilar = document.getElementById('fpga-btn-spinner-compilar');
+        const txCompilar = document.getElementById('fpga-btn-compilar-texto');
         if (spCompilar) spCompilar.style.display = 'none';
         if (txCompilar) txCompilar.innerText = '✅ Verificar';
 
-        const spSimular = document.getElementById('btn-spinner-simular');
-        const txSimular = document.getElementById('btn-simular-texto');
+        const spSimular = document.getElementById('fpga-btn-spinner-simular');
+        const txSimular = document.getElementById('fpga-btn-simular-texto');
         if (spSimular) spSimular.style.display = 'none';
         if (txSimular) txSimular.innerText = '▶️ Simular';
     }
 
     function initSimulador() {
-        const containerDesign = document.getElementById('editor_design');
-        const containerTB = document.getElementById('editor_tb');
+        const containerDesign = document.getElementById('fpga-editor_design');
+        const containerTB = document.getElementById('fpga-editor_tb');
         if (!containerDesign || !containerTB) return;
 
         // --- 1. WEBSOCKET ---
@@ -59,7 +59,7 @@
             : 'ws://localhost:8000/ws';
 
         ws = new WebSocket(wsUrl);
-        const est = document.getElementById('estado_ws');
+        const est = document.getElementById('fpga-estado_ws');
 
         ws.onopen = () => { 
             if (est) { 
@@ -643,7 +643,7 @@ endmodule`
         const iframeDesign = crearFrameMonaco(containerDesign, 'design', examples.flipflop.design);
 
         // Actualizar editores al seleccionar un ejemplo
-        const selectEjemplo = document.getElementById('ejemplos-basicos');
+        const selectEjemplo = document.getElementById('fpga-ejemplos-basicos');
         if (selectEjemplo) {
             selectEjemplo.addEventListener('change', (e) => {
                 const ej = examples[e.target.value];
@@ -677,7 +677,7 @@ endmodule`
         }
 
         function setTranscript(texto, esError = false) {
-            const transcript = document.getElementById('simulation-transcript');
+            const transcript = document.getElementById('fpga-simulation-transcript');
             if (!transcript) return;
             const color = esError ? '#e74c3c' : '#2ecc71';
             transcript.innerHTML = `<span style="color: ${color};">${texto}</span>`;
@@ -685,7 +685,7 @@ endmodule`
         }
 
         function appendTranscript(texto, esError = false) {
-            const transcript = document.getElementById('simulation-transcript');
+            const transcript = document.getElementById('fpga-simulation-transcript');
             if (!transcript) return;
             const color = esError ? '#e74c3c' : '#2ecc71';
             transcript.innerHTML += `\n<span style="color: ${color};">${texto}</span>`;
@@ -792,7 +792,7 @@ endmodule`
             const codeDesign = obtenerCodigo(iframeDesign);
             if (!ws || ws.readyState !== WebSocket.OPEN || !codeDesign) return;
 
-            const visor = document.getElementById('visor-esquema');
+            const visor = document.getElementById('fpga-visor-esquema');
             if (visor) {
                 visor.innerHTML = '<p style="text-align:center; color:#555; margin-top:170px;">⚙️ Sintetizando Jerarquía...</p>';
             }
@@ -805,7 +805,7 @@ endmodule`
         }
 
         function renderizarEsquemaSVG(contenidoSVG) {
-            const contenedor = document.getElementById("visor-esquema");
+            const contenedor = document.getElementById("fpga-visor-esquema");
             if (!contenedor) return;
 
             contenedor.innerHTML = contenidoSVG;
@@ -829,7 +829,7 @@ endmodule`
         }
 
         function mostrarErrorSintesis(msg) {
-            const visor = document.getElementById("visor-esquema");
+            const visor = document.getElementById("fpga-visor-esquema");
             if (visor) {
                 visor.innerHTML = `
                     <div style="color: #d32f2f; padding: 15px; font-family: monospace; white-space: pre-wrap; background: #ffebee; height: 100%; overflow: auto; font-size: 11px;">
@@ -840,16 +840,16 @@ endmodule`
         }
 
         // --- 4. BINDINGS ---
-        const btnLinter = document.getElementById('btn-linter');
+        const btnLinter = document.getElementById('fpga-btn-linter');
         if (btnLinter) btnLinter.addEventListener('click', ejecutarLinter);
 
-        const btnCompilar = document.getElementById('btn-compilar');
+        const btnCompilar = document.getElementById('fpga-btn-compilar');
         if (btnCompilar) btnCompilar.addEventListener('click', compilarCodigo);
 
-        const btnSimular = document.getElementById('btn-simular');
+        const btnSimular = document.getElementById('fpga-btn-simular');
         if (btnSimular) btnSimular.addEventListener('click', simularCodigo);
 
-        const btnEsquema = document.getElementById('btn-ver-esquema');
+        const btnEsquema = document.getElementById('fpga-btn-ver-esquema');
         if (btnEsquema) btnEsquema.addEventListener('click', solicitarEsquema);
     }
 

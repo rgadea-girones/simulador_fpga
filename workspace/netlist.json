@@ -1,10 +1,10 @@
 {
   "creator": "Yosys 0.9 (git sha1 1979e0b)",
   "modules": {
-    "flipflop_d": {
+    "contador": {
       "attributes": {
         "top": 1,
-        "src": "design.sv:1"
+        "src": "design.sv:33"
       },
       "ports": {
         "clk": {
@@ -15,27 +15,151 @@
           "direction": "input",
           "bits": [ 3 ]
         },
-        "d": {
+        "en": {
           "direction": "input",
           "bits": [ 4 ]
         },
-        "q": {
-          "direction": "output",
+        "dir": {
+          "direction": "input",
           "bits": [ 5 ]
+        },
+        "TC": {
+          "direction": "output",
+          "bits": [ 6 ]
+        },
+        "count": {
+          "direction": "output",
+          "bits": [ 7, 8, 9, 10 ]
         }
       },
       "cells": {
-        "$procdff$3": {
+        "$add$design.sv:45$3": {
+          "hide_name": 1,
+          "type": "$add",
+          "parameters": {
+            "A_SIGNED": 0,
+            "A_WIDTH": 4,
+            "B_SIGNED": 0,
+            "B_WIDTH": 32,
+            "Y_WIDTH": 32
+          },
+          "attributes": {
+            "src": "design.sv:45"
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 7, 8, 9, 10 ],
+            "B": [ "1", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0" ],
+            "Y": [ 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42 ]
+          }
+        },
+        "$and$design.sv:49$6": {
+          "hide_name": 1,
+          "type": "$and",
+          "parameters": {
+            "A_SIGNED": 0,
+            "A_WIDTH": 1,
+            "B_SIGNED": 0,
+            "B_WIDTH": 1,
+            "Y_WIDTH": 1
+          },
+          "attributes": {
+            "src": "design.sv:49"
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 43 ],
+            "B": [ 4 ],
+            "Y": [ 44 ]
+          }
+        },
+        "$and$design.sv:49$8": {
+          "hide_name": 1,
+          "type": "$and",
+          "parameters": {
+            "A_SIGNED": 0,
+            "A_WIDTH": 1,
+            "B_SIGNED": 0,
+            "B_WIDTH": 1,
+            "Y_WIDTH": 1
+          },
+          "attributes": {
+            "src": "design.sv:49"
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 45 ],
+            "B": [ 4 ],
+            "Y": [ 46 ]
+          }
+        },
+        "$eq$design.sv:49$5": {
+          "hide_name": 1,
+          "type": "$eq",
+          "parameters": {
+            "A_SIGNED": 0,
+            "A_WIDTH": 4,
+            "B_SIGNED": 0,
+            "B_WIDTH": 4,
+            "Y_WIDTH": 1
+          },
+          "attributes": {
+            "src": "design.sv:49"
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 7, 8, 9, 10 ],
+            "B": [ "1", "1", "1", "1" ],
+            "Y": [ 43 ]
+          }
+        },
+        "$eq$design.sv:49$7": {
+          "hide_name": 1,
+          "type": "$logic_not",
+          "parameters": {
+            "A_SIGNED": 0,
+            "A_WIDTH": 4,
+            "Y_WIDTH": 1
+          },
+          "attributes": {
+            "src": "design.sv:49"
+          },
+          "port_directions": {
+            "A": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 7, 8, 9, 10 ],
+            "Y": [ 45 ]
+          }
+        },
+        "$procdff$26": {
           "hide_name": 1,
           "type": "$adff",
           "parameters": {
             "ARST_POLARITY": 0,
             "ARST_VALUE": 0,
             "CLK_POLARITY": 1,
-            "WIDTH": 1
+            "WIDTH": 4
           },
           "attributes": {
-            "src": "design.sv:8"
+            "src": "design.sv:41"
           },
           "port_directions": {
             "ARST": "input",
@@ -46,38 +170,200 @@
           "connections": {
             "ARST": [ 3 ],
             "CLK": [ 2 ],
-            "D": [ 4 ],
-            "Q": [ 5 ]
+            "D": [ 47, 48, 49, 50 ],
+            "Q": [ 7, 8, 9, 10 ]
+          }
+        },
+        "$procmux$22": {
+          "hide_name": 1,
+          "type": "$mux",
+          "parameters": {
+            "WIDTH": 4
+          },
+          "attributes": {
+            "full_case": 1,
+            "src": "design.sv:45"
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "S": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 51, 52, 53, 54 ],
+            "B": [ 11, 12, 13, 14 ],
+            "S": [ 5 ],
+            "Y": [ 55, 56, 57, 58 ]
+          }
+        },
+        "$procmux$24": {
+          "hide_name": 1,
+          "type": "$mux",
+          "parameters": {
+            "WIDTH": 4
+          },
+          "attributes": {
+            "src": "design.sv:44"
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "S": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 7, 8, 9, 10 ],
+            "B": [ 55, 56, 57, 58 ],
+            "S": [ 4 ],
+            "Y": [ 47, 48, 49, 50 ]
+          }
+        },
+        "$sub$design.sv:46$4": {
+          "hide_name": 1,
+          "type": "$sub",
+          "parameters": {
+            "A_SIGNED": 0,
+            "A_WIDTH": 4,
+            "B_SIGNED": 0,
+            "B_WIDTH": 32,
+            "Y_WIDTH": 32
+          },
+          "attributes": {
+            "src": "design.sv:46"
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 7, 8, 9, 10 ],
+            "B": [ "1", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0" ],
+            "Y": [ 51, 52, 53, 54, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86 ]
+          }
+        },
+        "$ternary$design.sv:49$9": {
+          "hide_name": 1,
+          "type": "$mux",
+          "parameters": {
+            "WIDTH": 1
+          },
+          "attributes": {
+            "src": "design.sv:49"
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "S": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 46 ],
+            "B": [ 44 ],
+            "S": [ 5 ],
+            "Y": [ 6 ]
           }
         }
       },
       "netnames": {
+        "$0\\count[3:0]": {
+          "hide_name": 1,
+          "bits": [ 47, 48, 49, 50 ],
+          "attributes": {
+            "src": "design.sv:41"
+          }
+        },
+        "$add$design.sv:45$3_Y": {
+          "hide_name": 1,
+          "bits": [ 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42 ],
+          "attributes": {
+            "src": "design.sv:45",
+            "unused_bits": "4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31"
+          }
+        },
+        "$and$design.sv:49$6_Y": {
+          "hide_name": 1,
+          "bits": [ 44 ],
+          "attributes": {
+            "src": "design.sv:49"
+          }
+        },
+        "$and$design.sv:49$8_Y": {
+          "hide_name": 1,
+          "bits": [ 46 ],
+          "attributes": {
+            "src": "design.sv:49"
+          }
+        },
+        "$eq$design.sv:49$5_Y": {
+          "hide_name": 1,
+          "bits": [ 43 ],
+          "attributes": {
+            "src": "design.sv:49"
+          }
+        },
+        "$eq$design.sv:49$7_Y": {
+          "hide_name": 1,
+          "bits": [ 45 ],
+          "attributes": {
+            "src": "design.sv:49"
+          }
+        },
+        "$procmux$22_Y": {
+          "hide_name": 1,
+          "bits": [ 55, 56, 57, 58 ],
+          "attributes": {
+          }
+        },
+        "$sub$design.sv:46$4_Y": {
+          "hide_name": 1,
+          "bits": [ 51, 52, 53, 54, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86 ],
+          "attributes": {
+            "src": "design.sv:46",
+            "unused_bits": "4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31"
+          }
+        },
+        "TC": {
+          "hide_name": 0,
+          "bits": [ 6 ],
+          "attributes": {
+            "src": "design.sv:38"
+          }
+        },
         "clk": {
           "hide_name": 0,
           "bits": [ 2 ],
           "attributes": {
-            "src": "design.sv:2"
+            "src": "design.sv:34"
           }
         },
-        "d": {
+        "count": {
           "hide_name": 0,
-          "bits": [ 4 ],
+          "bits": [ 7, 8, 9, 10 ],
           "attributes": {
-            "src": "design.sv:4"
+            "src": "design.sv:39"
           }
         },
-        "q": {
+        "dir": {
           "hide_name": 0,
           "bits": [ 5 ],
           "attributes": {
-            "src": "design.sv:5"
+            "src": "design.sv:37"
+          }
+        },
+        "en": {
+          "hide_name": 0,
+          "bits": [ 4 ],
+          "attributes": {
+            "src": "design.sv:36"
           }
         },
         "rst_n": {
           "hide_name": 0,
           "bits": [ 3 ],
           "attributes": {
-            "src": "design.sv:3"
+            "src": "design.sv:35"
           }
         }
       }

@@ -92,7 +92,7 @@ class SimuladorFPGA_Plugin {
                 <!-- TÍTULO PRINCIPAL (white-space: nowrap evita desbordamientos) -->
                 <div style="font-weight: bold; font-size: 15px; white-space: nowrap; flex-shrink: 0; display: flex; align-items: center; gap: 8px;">
                     🛠️ <span>Entorno de Desarrollo y Simulación SystemVerilog</span>
-                    <select id="ejemplos-basicos" style="margin-left: 15px; font-size: 12px; padding: 4px 8px; border-radius: 4px; background: #34495e; color: white; border: 1px solid #7f8c8d; cursor: pointer;">
+                    <select id="fpga-ejemplos-basicos" style="margin-left: 15px; font-size: 12px; padding: 4px 8px; border-radius: 4px; background: #34495e; color: white; border: 1px solid #7f8c8d; cursor: pointer;">
                         <option value="flipflop">Flip-Flop D</option>
                         <option value="multiplexor">Multiplexor 2:1</option>
                         <option value="codificador">Codificador de Prioridad</option>
@@ -107,29 +107,29 @@ class SimuladorFPGA_Plugin {
                 <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
                     
                     <!-- Estado WebSocket/Linter -->
-                    <span id="estado_ws" style="font-size: 12px; font-weight: bold; color: #f1c40f; white-space: nowrap; margin-right: 6px;">
+                    <span id="fpga-estado_ws" style="font-size: 12px; font-weight: bold; color: #f1c40f; white-space: nowrap; margin-right: 6px;">
                         🟠 Conectando...
                     </span>
                     
                     <!-- Botón Linter -->
-                    <button id="btn-linter" class="sim-btn" style="background-color: #e67e22; color: white;">
+                    <button id="fpga-btn-linter" class="sim-btn" style="background-color: #e67e22; color: white;">
                         🔍 Comprobar (Linter)
                     </button>
 
                     <!-- Botón Verificar -->
-                    <button id="btn-compilar" class="sim-btn" style="background-color: #2980b9; color: white;">
-                        <span id="btn-spinner-compilar" class="sim-spinner" style="display: none;"></span>
-                        <span id="btn-compilar-texto">✅ Verificar</span>
+                    <button id="fpga-btn-compilar" class="sim-btn" style="background-color: #2980b9; color: white;">
+                        <span id="fpga-btn-spinner-compilar" class="sim-spinner" style="display: none;"></span>
+                        <span id="fpga-btn-compilar-texto">✅ Verificar</span>
                     </button>
 
                     <!-- Botón Simular -->
-                    <button id="btn-simular" class="sim-btn" style="background-color: #27ae60; color: white;">
-                        <span id="btn-spinner-simular" class="sim-spinner" style="display: none;"></span>
-                        <span id="btn-simular-texto">▶️ Simular</span>
+                    <button id="fpga-btn-simular" class="sim-btn" style="background-color: #27ae60; color: white;">
+                        <span id="fpga-btn-spinner-simular" class="sim-spinner" style="display: none;"></span>
+                        <span id="fpga-btn-simular-texto">▶️ Simular</span>
                     </button>
 
                     <!-- Botón Yosys -->
-                    <button id="btn-ver-esquema" class="sim-btn" style="background-color: #8e44ad; color: white;">
+                    <button id="fpga-btn-ver-esquema" class="sim-btn" style="background-color: #8e44ad; color: white;">
                         👁️ Sintetizar (Yosys)
                     </button>
 
@@ -144,7 +144,7 @@ class SimuladorFPGA_Plugin {
                     <div style="background-color: #34495e; color: #ecf0f1; padding: 6px 12px; font-weight: bold; font-size: 13px;">
                         🧪 Banco de Pruebas (Testbench)
                     </div>
-                    <div id="editor_tb" style="height: 380px; width: 100%;"></div>
+                    <div id="fpga-editor_tb" style="height: 380px; width: 100%;"></div>
                 </div>
 
                 <!-- 2. ARRIBA DERECHA: DISEÑO -->
@@ -152,16 +152,16 @@ class SimuladorFPGA_Plugin {
                     <div style="background-color: #34495e; color: #ecf0f1; padding: 6px 12px; font-weight: bold; font-size: 13px;">
                         📄 Módulo de Diseño (Design)
                     </div>
-                    <div id="editor_design" style="height: 380px; width: 100%;"></div>
+                    <div id="fpga-editor_design" style="height: 380px; width: 100%;"></div>
                 </div>
 
                 <!-- 3. ABAJO IZQUIERDA: TRANSCRIPT -->
                 <div style="border: 1px solid #444; border-radius: 6px; overflow: hidden; background-color: #0f1419;">
                     <div style="background-color: #34495e; color: #ecf0f1; padding: 6px 12px; font-weight: bold; font-size: 13px; display: flex; justify-content: space-between;">
                         <span>💻 Console Transcript (QuestaSim)</span>
-                        <span id="transcript-status" style="font-weight: normal; font-size: 11px; color: #bdc3c7;">Esperando acción...</span>
+                        <span id="fpga-transcript-status" style="font-weight: normal; font-size: 11px; color: #bdc3c7;">Esperando acción...</span>
                     </div>
-                    <div id="simulation-transcript" style="height: 380px; width: 100%; padding: 10px; font-family: 'Consolas', 'Courier New', monospace; font-size: 12px; color: #2ecc71; overflow-y: auto; box-sizing: border-box; white-space: pre-wrap; background-color: #0d1117;">
+                    <div id="fpga-simulation-transcript" style="height: 380px; width: 100%; padding: 10px; font-family: 'Consolas', 'Courier New', monospace; font-size: 12px; color: #2ecc71; overflow-y: auto; box-sizing: border-box; white-space: pre-wrap; background-color: #0d1117;">
 // La salida del compilador y simulación aparecerá aquí...
                     </div>
                 </div>
@@ -171,7 +171,7 @@ class SimuladorFPGA_Plugin {
                     <div style="background-color: #34495e; color: #ecf0f1; padding: 6px 12px; font-weight: bold; font-size: 13px;">
                         🎨 Esquema Sintetizado (Yosys RTL)
                     </div>
-                    <div id="visor-esquema" style="height: 380px; width: 100%; position: relative; overflow: hidden;">
+                    <div id="fpga-visor-esquema" style="height: 380px; width: 100%; position: relative; overflow: hidden;">
                         <p style="text-align: center; color: #7f8c8d; margin-top: 170px; font-size: 13px;">
                             Pulsa "Sintetizar (Yosys)" para generar el circuito RTL.
                         </p>

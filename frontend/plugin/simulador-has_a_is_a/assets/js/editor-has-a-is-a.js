@@ -15,11 +15,11 @@
     function mostrarCargando(tipo) {
         cambiarEstadoBotones(true);
         if (tipo === 'linter') {
-            const btn = document.getElementById('btn-linter');
+            const btn = document.getElementById('has-a-is-a-btn-linter');
             if (btn) btn.innerText = '🔍 Comprobando...';
         } else if (tipo === 'compilar') {
-            const sp = document.getElementById('btn-spinner-compilar');
-            const tx = document.getElementById('btn-compilar-texto');
+            const sp = document.getElementById('has-a-is-a-btn-spinner-compilar');
+            const tx = document.getElementById('has-a-is-a-btn-compilar-texto');
             if (sp) sp.style.display = 'inline-block';
             if (tx) tx.innerText = 'Verificando...';
         }
@@ -28,21 +28,21 @@
     function restaurarEstadoBotones() {
         cambiarEstadoBotones(false);
         
-        const btnLinter = document.getElementById('btn-linter');
+        const btnLinter = document.getElementById('has-a-is-a-btn-linter');
         if (btnLinter) btnLinter.innerText = '🔍 Comprobar (Linter)';
 
-        const spCompilar = document.getElementById('btn-spinner-compilar');
-        const txCompilar = document.getElementById('btn-compilar-texto');
+        const spCompilar = document.getElementById('has-a-is-a-btn-spinner-compilar');
+        const txCompilar = document.getElementById('has-a-is-a-btn-compilar-texto');
         if (spCompilar) spCompilar.style.display = 'none';
         if (txCompilar) txCompilar.innerText = '✅ Verificar';
 
-        const btnAI = document.getElementById('btn-ai-autocomplete');
+        const btnAI = document.getElementById('has-a-is-a-btn-ai-autocomplete');
         if (btnAI) btnAI.innerText = '🤖 Completar IA';
     }
 
     function initSimulador() {
-        const containerDesign = document.getElementById('editor_design');
-        const containerTB = document.getElementById('editor_tb');
+        const containerDesign = document.getElementById('has-a-is-a-editor_design');
+        const containerTB = document.getElementById('has-a-is-a-editor_tb');
         if (!containerDesign || !containerTB) return;
 
         // --- 1. WEBSOCKET ---
@@ -51,7 +51,7 @@
             : 'ws://localhost:8000/ws';
 
         ws = new WebSocket(wsUrl);
-        const est = document.getElementById('estado_ws');
+        const est = document.getElementById('has-a-is-a-estado_ws');
 
         ws.onopen = () => { 
             if (est) { 
@@ -982,13 +982,13 @@ endmodule`,
         const iframeDesign = crearFrameMonaco(containerDesign, 'design', examples.clases.design);
 
         // Actualizar explicación inicial
-        const panelInfo = document.getElementById('panel-explicaciones');
+        const panelInfo = document.getElementById('has-a-is-a-panel-explicaciones');
         if (panelInfo) {
             panelInfo.innerHTML = examples.clases.info;
         }
 
         // Actualizar editores e información al cambiar de ejemplo
-        const selectEjemplo = document.getElementById('ejemplos-has-a-is-a');
+        const selectEjemplo = document.getElementById('has-a-is-a-ejemplos-has-a-is-a');
         if (selectEjemplo) {
             selectEjemplo.addEventListener('change', (e) => {
                 const ej = examples[e.target.value];
@@ -1024,7 +1024,7 @@ endmodule`,
         }
 
         function setTranscript(texto, esError = false) {
-            const transcript = document.getElementById('simulation-transcript');
+            const transcript = document.getElementById('has-a-is-a-simulation-transcript');
             if (!transcript) return;
             const color = esError ? '#e74c3c' : '#2ecc71';
             transcript.innerHTML = `<span style="color: ${color};">${texto}</span>`;
@@ -1052,7 +1052,7 @@ endmodule`,
         }
 
         function appendTranscript(texto, esError = false) {
-            const transcript = document.getElementById('simulation-transcript');
+            const transcript = document.getElementById('has-a-is-a-simulation-transcript');
             if (!transcript) return;
             const color = esError ? '#e74c3c' : '#2ecc71';
             transcript.innerHTML += `\n<span style="color: ${color};">${texto}</span>`;
@@ -1182,7 +1182,7 @@ endmodule`,
             }
 
             cambiarEstadoBotones(true);
-            const btnAI = document.getElementById('btn-ai-autocomplete');
+            const btnAI = document.getElementById('has-a-is-a-btn-ai-autocomplete');
             if (btnAI) btnAI.innerText = '🤖 Completando...';
             
             setTranscript("🤖 Solicitando autocompletado al asistente de IA...", false);
@@ -1198,11 +1198,11 @@ endmodule`,
         }
 
         // --- MANEJO DE MODAL AJUSTES IA ---
-        const modal = document.getElementById('settings-modal');
-        const enableCheck = document.getElementById('poligpt-enable');
-        const apiKeyInput = document.getElementById('poligpt-apikey');
-        const urlInput = document.getElementById('poligpt-url');
-        const modelInput = document.getElementById('poligpt-model');
+        const modal = document.getElementById('has-a-is-a-settings-modal');
+        const enableCheck = document.getElementById('has-a-is-a-poligpt-enable');
+        const apiKeyInput = document.getElementById('has-a-is-a-poligpt-apikey');
+        const urlInput = document.getElementById('has-a-is-a-poligpt-url');
+        const modelInput = document.getElementById('has-a-is-a-poligpt-model');
 
         function abrirAjustes() {
             if (!modal) return;
@@ -1230,22 +1230,22 @@ endmodule`,
         }
 
         // --- BINDINGS ---
-        const btnLinter = document.getElementById('btn-linter');
+        const btnLinter = document.getElementById('has-a-is-a-btn-linter');
         if (btnLinter) btnLinter.addEventListener('click', ejecutarLinter);
 
-        const btnCompilar = document.getElementById('btn-compilar');
+        const btnCompilar = document.getElementById('has-a-is-a-btn-compilar');
         if (btnCompilar) btnCompilar.addEventListener('click', compilarCodigo);
 
-        const btnAI = document.getElementById('btn-ai-autocomplete');
+        const btnAI = document.getElementById('has-a-is-a-btn-ai-autocomplete');
         if (btnAI) btnAI.addEventListener('click', solicitarAutocompletado);
 
-        const btnSettings = document.getElementById('btn-settings');
+        const btnSettings = document.getElementById('has-a-is-a-btn-settings');
         if (btnSettings) btnSettings.addEventListener('click', abrirAjustes);
 
-        const btnCancel = document.getElementById('settings-cancel');
+        const btnCancel = document.getElementById('has-a-is-a-settings-cancel');
         if (btnCancel) btnCancel.addEventListener('click', cerrarAjustes);
 
-        const btnSave = document.getElementById('settings-save');
+        const btnSave = document.getElementById('has-a-is-a-settings-save');
         if (btnSave) btnSave.addEventListener('click', guardarAjustes);
     }
 

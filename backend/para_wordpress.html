@@ -1,0 +1,447 @@
+<!-- 1. Cargar la librería de interactividad -->
+<script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.1/dist/svg-pan-zoom.min.js"></script>
+
+<!-- 2. El botón para pedir el esquema -->
+<button id="btn-ver-esquema"
+    style="padding: 10px 20px; background-color: #0073aa; color: white; border: none; border-radius: 4px; cursor: pointer;">
+    👁️ Ver Esquema de Hardware
+</button>
+
+<!-- 3. La pizarra interactiva -->
+<div id="visor-esquema"
+    style="width: 100%; height: 500px; border: 2px solid #ccc; background-color: #fafafa; margin-top: 15px; border-radius: 6px; overflow: hidden; position: relative;">
+    <p style="text-align: center; color: #888; margin-top: 230px; font-family: sans-serif;">
+        Pulsa el botón para sintetizar el circuito.
+    </p>
+</div>
+
+<div style="max-width: 1000px; margin: 30px auto; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+    <div
+        style="border: 2px solid #333; border-radius: 8px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
+        <div
+            style="background-color: #2c3e50; color: white; padding: 12px; font-weight: bold; display: flex; justify-content: space-between; align-items: center;">
+            <span>📝 Editor Verilog (Terasic DE-Series)</span>
+            <div>
+                <span style="font-size: 11px; margin-right: 15px; color: #bdc3c7;">Tip: Pulsa Ctrl+S para
+                    compilar</span>
+                <button onclick="enviarCodigo()"
+                    style="background-color: #27ae60; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; transition: 0.3s;">⚙️
+                    Compilar y Simular</button>
+            </div>
+        </div>
+        <div id="editor_monaco" style="height: 450px; width: 100%;"></div>
+    </div>
+
+    <div
+        style="background-color: #2c3e50; color: white; padding: 25px; border-radius: 12px; border: 5px solid #1a252f; box-shadow: 0 15px 30px rgba(0,0,0,0.4);">
+        <div id="estado_ws"
+            style="text-align: right; margin-bottom: 15px; font-size: 13px; font-weight: bold; color: #f1c40f;">🟠
+            Inicializando...</div>
+        <div id="hex_container"
+            style="display: flex; justify-content: space-around; background: #1a252f; padding: 20px; border-radius: 8px; margin-bottom: 25px; border: 1px solid #34495e;">
+        </div>
+        <div style="background: #34495e; padding: 20px; border-radius: 8px; margin-bottom: 25px;">
+            <div id="ledr_container" style="display: flex; justify-content: center; gap: 8px; margin-bottom: 15px;">
+            </div>
+            <div id="ledg_container" style="display: flex; justify-content: center; gap: 8px;"></div>
+        </div>
+        <div
+            style="display: flex; justify-content: space-between; align-items: center; background-color: #1a252f; padding: 20px; border-radius: 8px;">
+            <div id="sw_container" style="display: flex; gap: 12px;"></div>
+            <div id="key_container" style="display: flex; gap: 20px;"></div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.36.1/min/vs/loader.min.js"></script>
+
+<script>
+    // --- GENERACIÓN DE HARDWARE ---
+    function crearHEX(id) {
+        return `<div style="text-align:center;"><svg id="${id}" width="45" height="70" viewBox="0 0 40 60" style="background: #000; padding: 5px; border-radius: 4px;">
+            <polygon id="${id}_0" points="10,5 30,5 25,10 15,10" fill="#222" /> <polygon id="${id}_1" points="32,7 32,27 27,25 27,9" fill="#222" /> <polygon id="${id}_2" points="32,33 32,53 27,51 27,35" fill="#222" /> <polygon id="${id}_3" points="10,55 30,55 25,50 15,50" fill="#222" /> <polygon id="${id}_4" points="8,33 8,53 13,51 13,35" fill="#222" /> <polygon id="${id}_5" points="8,7 8,27 13,25 13,9" fill="#222" /> <polygon id="${id}_6" points="10,30 30,30 25,27 15,27 10,30" fill="#222" /> </svg><div style="font-size:10px; color:#bdc3c7; margin-top:5px;">${id}</div></div>`;
+    }
+
+    const hexC = document.getElementById('hex_container');
+    for (let i = 5; i >= 0; i--) hexC.innerHTML += crearHEX(`HEX${i}`);
+
+    const lrC = document.getElementById('ledr_container');
+    const lgC = document.getElementById('ledg_container');
+    for (let i = 9; i >= 0; i--) {
+        lrC.innerHTML += `<div style="text-align:center;"><div id="LEDR${i}" style="width:18px;height:18px;border-radius:50%;background:#300;border:1px solid #000;"></div><div style="font-size:9px;color:#e74c3c;">R${i}</div></div>`;
+        lgC.innerHTML += `<div style="text-align:center;"><div id="LEDG${i}" style="width:18px;height:18px;border-radius:50%;background:#030;border:1px solid #000;"></div><div style="font-size:9px;color:#2ecc71;">G${i}</div></div>`;
+    }
+
+    const swC = document.getElementById('sw_container');
+    for (let i = 9; i >= 0; i--) {
+        swC.innerHTML += `<div onclick="toggleSW(${i})" style="text-align:center;cursor:pointer;"><div id="SW${i}" style="width:22px;height:45px;background:#000;border:2px solid #555;position:relative;"><div id="SW${i}_p" style="width:100%;height:50%;background:#ecf0f1;position:absolute;bottom:0;transition:0.1s;"></div></div><div style="font-size:10px;margin-top:5px;">SW${i}</div></div>`;
+    }
+
+    const keyLabels = ["Reset (rst_n)", "KEY1", "KEY2", "KEY3"];
+    const kC = document.getElementById('key_container');
+    for (let i = 3; i >= 0; i--) {
+        kC.innerHTML += `<div style="text-align:center;"><button onmousedown="pressKEY(${i},0)" onmouseup="pressKEY(${i},1)" onmouseleave="pressKEY(${i},1)" style="width:45px;height:45px;border-radius:50%;background:#bdc3c7;border:4px solid #7f8c8d;cursor:pointer;box-shadow:0 4px #2c3e50;"></button><div style="font-size:10px;font-weight:bold;margin-top:8px;">KEY${i}</div><div style="font-size:9px;color:#bdc3c7;">${keyLabels[i]}</div></div>`;
+    }
+
+    // --- EDITOR Y LINTER ---
+    require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.36.1/min/vs' } });
+    require(['vs/editor/editor.main'], function () {
+        window.editor = monaco.editor.create(document.getElementById('editor_monaco'), {
+            value: `module top_system(
+    input clk,
+    input [3:0] KEY,
+    input [9:0] SW,
+    output [9:0] LEDR,
+    output [9:0] LEDG,
+    output [6:0] HEX0, HEX1, HEX2, HEX3, HEX4, HEX5
+);
+    // Ejemplo: LED Rojo sigue a SW
+    assign LEDR = SW;
+    assign LEDG = ~SW; // LED Verde inverso
+    assign HEX0 = 7'b1000000; // Muestra un '0'
+endmodule`,
+            language: 'verilog',
+            theme: 'vs-dark',
+            automaticLayout: true
+        });
+
+        window.editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, function () {
+            enviarCodigo();
+        });
+    });
+
+    function aplicarLinter(errorText) {
+        const markers = [];
+        const regex = /ejercicio_fsm\.v\((\d+)\):\s*(.*)/g;
+        let m;
+        while ((m = regex.exec(errorText)) !== null) {
+            markers.push({
+                startLineNumber: parseInt(m[1]), startColumn: 1,
+                endLineNumber: parseInt(m[1]), endColumn: 100,
+                message: m[2], severity: monaco.MarkerSeverity.Error
+            });
+        }
+        monaco.editor.setModelMarkers(window.editor.getModel(), 'verilog', markers);
+    }
+
+    // --- COMUNICACIÓN Y WEBSOCKETS ---
+    const ws = new WebSocket("ws://localhost:8000/ws");
+    const est = document.getElementById('estado_ws');
+    let panZoomInstance = null; // Guardamos esta variable globalmente
+
+    ws.onopen = () => { est.innerText = "🟢 CONECTADO"; est.style.color = "#2ecc71"; };
+    ws.onclose = () => { est.innerText = "🔴 DESCONECTADO (Reinicia el server)"; est.style.color = "#e74c3c"; };
+
+    function enviarCodigo() {
+        if (ws.readyState !== 1) return;
+        est.innerText = "⏳ COMPILANDO..."; est.style.color = "#f1c40f";
+        monaco.editor.setModelMarkers(window.editor.getModel(), 'verilog', []);
+        ws.send(JSON.stringify({ accion: "compilar", codigo: window.editor.getValue() }));
+    }
+
+    let sws = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    function toggleSW(i) {
+        sws[i] = sws[i] ? 0 : 1;
+        document.getElementById(`SW${i}_p`).style.bottom = sws[i] ? '50%' : '0';
+        ws.send(JSON.stringify({ accion: "set_sw", sw_array: sws.reverse().join("") }));
+        sws.reverse();
+    }
+
+    function pressKEY(i, v) {
+        ws.send(JSON.stringify({ accion: "set_key", key_index: i, valor: v }));
+    }
+
+    // --- BOTÓN DE VER ESQUEMA (YOSYS) ---
+    document.getElementById('btn-ver-esquema').addEventListener('click', () => {
+        const codigoAlumno = window.editor.getValue();
+        document.getElementById('visor-esquema').innerHTML = '<p style="text-align:center; color:#555; margin-top:230px;">⚙️ Sintetizando Jerarquía...</p>';
+
+        ws.send(JSON.stringify({
+            accion: "ver_esquema",
+            codigo: codigoAlumno,
+            modulo: "auto" // <--- Pedimos la vista desde arriba del todo
+        }));
+    });
+
+    // --- EL RECEPTOR MAESTRO DE MENSAJES (UNIFICADO) ---
+    ws.onmessage = (e) => {
+        const r = JSON.parse(e.data);
+
+        // 1. SI ES UN DIBUJO DE YOSYS
+        // 1. SI ES UN DIBUJO DE YOSYS
+        if (r.tipo === "esquema_svg") {
+            const contenedor = document.getElementById("visor-esquema");
+            contenedor.innerHTML = r.contenido_svg;
+
+            const elementoSvg = contenedor.querySelector('svg');
+            elementoSvg.style.width = "100%";
+            elementoSvg.style.height = "100%";
+
+            // 🚀 1. EL ESCUADRÓN DE RESCATE DE BUSES 🚀
+            // Antes de aplicar nuestro CSS general, buscamos los cables que netlistsvg hizo un poco más gruesos
+            const todosLosCables = elementoSvg.querySelectorAll('path, line');
+            todosLosCables.forEach(cable => {
+                // netlistsvg suele poner stroke-width="2" a los buses
+                const anchoAtributo = cable.getAttribute('stroke-width');
+                const anchoEstilo = cable.style.strokeWidth;
+
+                if (anchoAtributo === '2' || anchoEstilo === '2' || anchoEstilo === '2px') {
+                    // ¡Te pillé, bus! Le ponemos una clase nuestra para salvarlo
+                    cable.classList.add('mi-bus-morado');
+                }
+            });
+
+            // --- INICIO DEL HACK DE COLORES ---
+            // Buscamos la etiqueta <style> original que pone netlistsvg
+            const estiloOriginal = elementoSvg.querySelector('style');
+            if (estiloOriginal) {
+                estiloOriginal.innerHTML = `
+                    /* 1. Color base de los cables (Azul estándar) */
+                    svg { stroke: #34495e; fill: none; }
+                    path, line { stroke: #2980b9; stroke-width: 1.5px; }
+/* 🚀 LA MAGIA: Pintamos de Morado Grueso los buses que rescatamos 🚀 */
+                    path.mi-bus-morado, line.mi-bus-morado {
+                        stroke: #8e44ad !important;
+                        stroke-width: 3.5px !important;
+                    }
+                    
+                    /* 2. Textos generales de los cables externos */
+                    text { fill: #2c3e50; font-family: 'Segoe UI', Tahoma, Arial, sans-serif; font-weight: bold; stroke: none; }
+                    
+                    /* 🚀 LA SOLUCIÓN AL TEXTO DESBORDADO 🚀 */
+                    /* Hacemos los nombres de los pines más pequeños y sin negrita para que quepan en la caja */
+                    g[s\\:type="inputPort"] text, g[s\\:type="outputPort"] text { 
+                        font-size: 8px ; 
+                        font-weight: normal; 
+                        font-family: 'Courier New', monospace;
+                    }
+                    
+                    /* Título principal del submódulo (ej. FSM_MEALY) centrado y elegante */
+                    g[s\\:type="generic"] > text {
+                        font-size: 12px;
+                        fill: #0e6655; /* Un verde más oscuro para que contraste */
+                    }
+                    /* ==================================== */
+
+                    /* 3. Puntos de unión y Burbujas NOT */
+                    circle { fill: #2980b9; stroke: none; }
+                    
+                    /* 4. Entradas e Inputs / Salidas y Outputs */
+                    g[s\\:type="inputExt"] path, g[s\\:type="outputExt"] path { fill: #d6eaf8; stroke: #2980b9; stroke-width: 1.5px; }
+                    g[s\\:type="inputExt"] text, g[s\\:type="outputExt"] text { fill: #154360; font-size: 16px; }
+                    
+                    /* 5. Constantes */
+                    g[s\\:type="constant"] rect { fill: #e5e7e9; stroke: #95a5a6; stroke-width: 1.5px; }
+                    g[s\\:type="constant"] text { fill: #7f8c8d; font-size: 11px; }
+                    
+                    /* 6. Flip-Flops y Latches */
+                    rect { fill: #fcf3cf; stroke: #d4ac0d; stroke-width: 1.5px; }
+                    
+                    /* 7. Multiplexores */
+                    polygon { fill: #f8f9f9; stroke: #34495e; stroke-width: 1.5px; }
+                `;
+            } // <--- ¡ESTA ES LA LLAVE QUE TE FALTA!
+            // --- FIN DEL HACK DE COLORES ---
+            // =================================================================
+            // 🚀 INICIO DEL HACK DEL FLIP-FLOP V3 (AJUSTE MILIMÉTRICO)
+            // =================================================================
+            const textos = elementoSvg.querySelectorAll('text');
+            textos.forEach(txt => {
+                const contenido = txt.textContent.trim();
+
+                // 1. Ocultar nombre y cuadrar
+                if (contenido.startsWith('$') && contenido.includes('dff')) {
+                    txt.textContent = 'FF-D';
+                    txt.style.fill = '#b9770e';
+                    txt.style.fontSize = '14px';
+                    txt.setAttribute('dx', '-10');
+                }
+                // 2. R y Burbuja
+                else if (contenido === 'ARST' || contenido === 'RST') {
+                    txt.textContent = 'R';
+                    txt.style.fontSize = '12px';
+                    txt.setAttribute('dx', '5'); // Separamos más la 'R' hacia la derecha para que no toque el borde
+                    txt.setAttribute('dy', '7');
+
+                    const ns = "http://www.w3.org/2000/svg";
+                    const burbuja = document.createElementNS(ns, "circle");
+
+                    const x = parseFloat(txt.getAttribute('x'));
+                    const y = parseFloat(txt.getAttribute('y'));
+
+                    // Ajuste milimétrico: 
+                    // (x - 3) lo mete más a la derecha para que muerda el borde de la caja
+                    // (y - 1.5) lo baja un poquito para que el cable lo atraviese por todo el centro
+                    burbuja.setAttribute('cx', x - 2);
+                    burbuja.setAttribute('cy', y + 3.5);
+                    burbuja.setAttribute('r', '3.5');
+
+                    burbuja.style.fill = '#fcf3cf';
+                    burbuja.style.stroke = '#2980b9';
+                    burbuja.style.strokeWidth = '1.5px';
+
+                    txt.parentNode.appendChild(burbuja);
+                }
+                // 3. Cuadrar el reloj (►)
+                else if (contenido === 'CLK' || contenido === 'C') {
+                    txt.textContent = '►';
+                    txt.style.fontSize = '12px';
+
+                    // Ajuste milimétrico:
+                    // dx='-3' lo mueve hacia la derecha, justo al límite interno de la caja
+                    // dy='3.5' lo baja para que la punta apunte directamente al cable azul
+                    txt.setAttribute('dx', '2');
+                    txt.setAttribute('dy', '7');
+                }
+                // 3. Cuadrar la entrada D)
+                else if (contenido === 'D') {
+                    txt.textContent = 'D';
+                    txt.style.fontSize = '12px';
+
+                    // Ajuste milimétrico:
+                    // dx='-3' lo mueve hacia la derecha, justo al límite interno de la caja
+                    // dy='3.5' lo baja para que la punta apunte directamente al cable azul
+                    txt.setAttribute('dx', '4.5');
+                    txt.setAttribute('dy', '7.5');
+                }
+                // 3. Cuadrar la salida Q)
+                else if (contenido === 'Q') {
+                    txt.textContent = 'Q';
+                    txt.style.fontSize = '12px';
+
+                    // Ajuste milimétrico:
+                    // dx='-3' lo mueve hacia la derecha, justo al límite interno de la caja
+                    // dy='3.5' lo baja para que la punta apunte directamente al cable azul
+                    txt.setAttribute('dx', '-13.5');
+                    txt.setAttribute('dy', '7');
+                }
+            });
+            // =================================================================
+            // FIN DEL HACK DEL FLIP-FLOP
+            // =================================================================
+
+            // =================================================================
+            // 🚀 INICIO DEL HACK DE NAVEGACIÓN JERÁRQUICA (DOBLE CLIC) V2
+            // =================================================================
+            const celdas = elementoSvg.querySelectorAll('g');
+            celdas.forEach(celda => {
+                let tipoModulo = celda.getAttribute('s:type');
+                if (!tipoModulo) return; // Si no tiene tipo, pasamos al siguiente
+
+                // --- LA CORRECCIÓN MÁGICA Y EL AJUSTE DE TAMAÑO DE PUERTOS ---
+                if (tipoModulo === 'generic') {
+                    // Cogemos TODOS los textos que hay dentro de esta caja verde
+                    const textosCaja = celda.querySelectorAll('text');
+
+                    if (textosCaja.length > 0) {
+                        // 1. El primer texto siempre es el título (ej. FSM_MEALY o contador)
+                        tipoModulo = textosCaja[0].textContent.trim(); // Rescatamos el nombre para el doble clic
+
+                        // Le damos estilo de título (Grande y verde oscuro)
+                        textosCaja[0].style.fontSize = '12px';
+                        textosCaja[0].style.fontWeight = 'bold';
+                        textosCaja[0].style.fill = '#0e6655';
+
+                        // 2. ¡LA SOLUCIÓN! Todos los demás textos (del 1 en adelante) son los puertos.
+                        // Los encogemos por la fuerza usando JavaScript puro.
+                        for (let i = 1; i < textosCaja.length; i++) {
+                            textosCaja[i].style.fontSize = '8px'; // <-- Aquí puedes probar 7px u 8px
+                            textosCaja[i].style.fontFamily = "'Courier New', monospace";
+                            textosCaja[i].style.fontWeight = 'normal';
+                            textosCaja[i].style.fill = '#2c3e50';
+
+                            // Opcional: Desplazamos un poco los textos para que no se peguen tanto a la línea
+                            const xActual = parseFloat(textosCaja[i].getAttribute('x'));
+                            textosCaja[i].setAttribute('x', xActual > 0 ? xActual - 2 : xActual + 2);
+                        }
+                    }
+                }
+                // ----------------------------
+                // ----------------------------
+
+                // Lista de cosas del dibujo que NO son submódulos interactivos
+                const ignorar = ['inputExt', 'outputExt', 'inputPort', 'outputPort', 'constant', 'split', 'join', 'generic'];
+
+                // Es un submódulo interactivo si NO está en la lista de ignorar y NO empieza por "$" (celdas internas de Yosys)
+                if (!ignorar.includes(tipoModulo) && !tipoModulo.startsWith('$')) {
+
+                    // Lo pintamos de verde menta para que invite a hacer clic
+                    const rect = celda.querySelector('rect');
+                    if (rect) {
+                        rect.style.fill = '#e8f8f5';
+                        rect.style.stroke = '#1abc9c';
+                        rect.style.cursor = 'pointer';
+                    }
+
+                    // Tooltip nativo
+                    const titulo = document.createElementNS("http://www.w3.org/2000/svg", "title");
+                    titulo.textContent = "🖱️ Doble clic para entrar al módulo: " + tipoModulo;
+                    celda.appendChild(titulo);
+
+                    // Al hacer doble clic, pedimos el submódulo real al servidor
+                    celda.addEventListener('dblclick', (e) => {
+                        e.stopPropagation(); // Evita que el clic se vuelva loco si hay cajas anidadas
+                        document.getElementById('visor-esquema').innerHTML = `<p style="text-align:center; color:#555; margin-top:230px;">🔍 Entrando al submódulo ${tipoModulo}...</p>`;
+                        ws.send(JSON.stringify({
+                            accion: "ver_esquema",
+                            codigo: window.editor.getValue(),
+                            modulo: tipoModulo // Ahora sí enviará "FSM_MEALY" o "contador"
+                        }));
+                    });
+                }
+            });
+            // =================================================================
+            // FIN DEL HACK DE NAVEGACIÓN
+            // =================================================================
+
+            if (panZoomInstance) { panZoomInstance.destroy(); }
+
+            panZoomInstance = svgPanZoom(elementoSvg, {
+                zoomEnabled: true,
+                controlIconsEnabled: true,
+                fit: true,
+                center: true,
+                minZoom: 0.5,
+                maxZoom: 15
+            });
+            return;
+        }
+
+        // 2. SI YOSYS DA ERROR DE SINTAXIS
+        if (r.tipo === "error") {
+            document.getElementById("visor-esquema").innerHTML = `
+                <div style="color: #d32f2f; padding: 20px; font-family: monospace; white-space: pre-wrap; background: #ffebee; height: 100%; overflow: auto;">
+                    <strong>❌ Error de Síntesis (Yosys):</strong><br><br>${r.mensaje}
+                </div>
+            `;
+            return;
+        }
+
+        // 3. SI ES RESPUESTA DE COMPILACIÓN (QUESTASIM)
+        if (r.status === "error_compilacion") {
+            est.innerText = "🔴 ERROR DE COMPILACIÓN"; est.style.color = "#e74c3c";
+            aplicarLinter(r.detalles);
+        } else if (r.status === "compilado_ok") {
+            est.innerText = "🟢 CIRCUITO ACTIVO"; est.style.color = "#2ecc71";
+        }
+
+        // 4. SI ES ACTUALIZACIÓN DE HARDWARE VIVO
+        if (r.ledr) actualizarBus(r.ledr, "LEDR", "#f00", "#300");
+        if (r.ledg) actualizarBus(r.ledg, "LEDG", "#2ecc71", "#030");
+        if (r.hex) {
+            Object.keys(r.hex).forEach(h => {
+                const bits = r.hex[h];
+                for (let b = 0; b < 7; b++) {
+                    document.getElementById(`${h}_${b}`).setAttribute("fill", bits[6 - b] === '0' ? "#f00" : "#222");
+                }
+            });
+        }
+    };
+
+    function actualizarBus(bits, prefix, onColor, offColor) {
+        for (let i = 0; i < bits.length; i++) {
+            const el = document.getElementById(prefix + (bits.length - 1 - i));
+            if (el) el.style.background = bits[i] === '1' ? onColor : offColor;
+        }
+    }
+</script>
