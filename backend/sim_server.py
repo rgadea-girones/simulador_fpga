@@ -194,31 +194,59 @@ async def generar_esquema_svg(codigo_verilog, modulo_objetivo="auto"):
 # ==========================================
 # AUTOCOMPLETADO IA (OLLAMA) — auxiliar async
 # ==========================================
-async def generar_completado_ia(websocket, texto: str, completion_id: str):
+async def generar_completado_ia(websocket, texto: str, completion_id: str, api_key: str = "", api_url: str = "", model_name: str = ""):
     """
-    Llama a Ollama para completar el código SV y devuelve el resultado
+    Llama a PoliGPT (si se provee clave/URL) o a Ollama local para completar el código SV y devuelve el resultado
     por el mismo WebSocket sin bloquearlo.
     """
-    prompt = (
-        "Eres un asistente de código SystemVerilog/Verilog. "
-        "Continúa el siguiente fragmento de código exactamente donde se interrumpe. "
-        "Responde ÚNICAMENTE con el código que viene a continuación, "
-        "sin ninguna explicación, sin bloques markdown, sin texto adicional:\n\n"
-        + texto
-    )
+    completion = ""
     try:
-        async with httpx.AsyncClient(timeout=30.0) as client:
-            resp = await client.post(
-                "http://localhost:11434/api/generate",
-                json={"model": "qwen2.5-coder:3b", "prompt": prompt, "stream": False}
+        if api_key and api_url:
+            headers = {
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json"
+            }
+            # Estructura estándar de OpenAI Chat Completions compatible con PoliGPT/OpenAI/DeepSeek
+            payload = {
+                "model": model_name or "gpt-3.5-turbo",
+                "messages": [
+                    {
+                        "role": "system", 
+                        "content": "Eres un asistente de código SystemVerilog. Continúa el siguiente código exactamente donde se interrumpe. Responde ÚNICAMENTE con el código de continuación directo, sin explicaciones ni markdown."
+                    },
+                    {"role": "user", "content": texto}
+                ],
+                "temperature": 0.2
+            }
+            async with httpx.AsyncClient(timeout=30.0) as client:
+                resp = await client.post(api_url, json=payload, headers=headers)
+                resp.raise_for_status()
+                data = resp.json()
+                if "choices" in data and len(data["choices"]) > 0:
+                    completion = data["choices"][0]["message"]["content"].strip()
+                elif "response" in data:
+                    completion = data["response"].strip()
+        else:
+            prompt = (
+                "Eres un asistente de código SystemVerilog/Verilog. "
+                "Continúa el siguiente fragmento de código exactamente donde se interrumpe. "
+                "Responde ÚNICAMENTE con el código que viene a continuación, "
+                "sin ninguna explicación, sin bloques markdown, sin texto adicional:\n\n"
+                + texto
             )
-            data = resp.json()
-            completion = data.get("response", "").strip()
-            # Eliminar bloques markdown si el modelo los incluye
-            completion = re.sub(r'^```[a-zA-Z]*\n?', '', completion)
-            completion = re.sub(r'\n?```$', '', completion).strip()
-    except Exception:
-        completion = ""
+            async with httpx.AsyncClient(timeout=30.0) as client:
+                resp = await client.post(
+                    "http://localhost:11434/api/generate",
+                    json={"model": "qwen2.5-coder:3b", "prompt": prompt, "stream": False}
+                )
+                data = resp.json()
+                completion = data.get("response", "").strip()
+
+        # Eliminar bloques markdown si el modelo los incluye por error
+        completion = re.sub(r'^```[a-zA-Z]*\n?', '', completion)
+        completion = re.sub(r'\n?```$', '', completion).strip()
+    except Exception as e:
+        completion = f"// Error en autocompletado: {str(e)}"
 
     try:
         await websocket.send_text(json.dumps({
@@ -590,8 +618,11 @@ async def websocket_endpoint(websocket: WebSocket):
             elif msg.get("accion") == "autocompletar":
                 texto = msg.get("texto", "")
                 completion_id = msg.get("id", "design")
+                api_key = msg.get("api_key", "")
+                api_url = msg.get("api_url", "")
+                model_name = msg.get("model", "")
                 # Se lanza como tarea separada para no bloquear el WebSocket
-                asyncio.create_task(generar_completado_ia(websocket, texto, completion_id))
+                asyncio.create_task(generar_completado_ia(websocket, texto, completion_id, api_key, api_url, model_name))
 
             # -----------------------------------------------------------
             # INTERACCIÓN CON INTERRUPTORES / BOTONES

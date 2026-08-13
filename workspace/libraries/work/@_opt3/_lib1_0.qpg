@@ -3,33 +3,17 @@ K4
 z2
 Z0 !s12c _opt3
 Z1 !s99 nomlopt
-Z2 !s12c _opt4
-R1
-Z3 !s12c _opt1
+Z2 !s12c _opt1
 R1
 R0
 R1
-R0
+Z3 !s12c _opt4
 R1
 R2
 R1
-R3
-R1
 R0
 R1
-R2
-R1
-R3
-R1
 R0
-R1
-R2
-R1
-R3
-R1
-R0
-R1
-R3
 R1
 R3
 R1
@@ -39,13 +23,9 @@ R0
 R1
 R3
 R1
-R3
+R2
 R1
-R3
-R1
-R3
-R1
-R3
+R0
 R1
 R3
 R1
@@ -53,47 +33,71 @@ R2
 R1
 R0
 R1
-R0
-R1
-R0
-R1
-R0
-R1
-R3
-R1
-R3
-R1
-R3
-R1
-R3
-R1
-R3
-R1
-R3
-R1
-R3
-R1
-R3
-R1
-R3
-R1
-R3
+R2
 R1
 R2
 R1
+R3
+R1
 R0
 R1
-R3
+R2
+R1
+R2
+R1
+R2
+R1
+R2
+R1
+R2
+R1
+R2
 R1
 R3
 R1
-R3
+R0
+R1
+R0
+R1
+R0
+R1
+R0
+R1
+R2
+R1
+R2
+R1
+R2
+R1
+R2
+R1
+R2
+R1
+R2
+R1
+R2
+R1
+R2
+R1
+R2
+R1
+R2
 R1
 R3
 R1
-R3
+R0
 R1
-R3
+R2
+R1
+R2
+R1
+R2
+R1
+R2
+R1
+R2
+R1
+R2
 R1
 Z4 !s12c _opt
 R1
@@ -139,19 +143,19 @@ R5
 R1
 R5
 R1
-R3
+R2
 R1
-R3
+R2
 R1
-R3
+R2
 R1
-R3
+R2
 R1
-R3
+R2
 R1
-R3
+R2
 R1
-R3
+R2
 R1
 R4
 R1
@@ -176,10 +180,10 @@ n@_opt
 Z12 OL;O;2023.3;77
 R6
 T_opt1
-!s110 1786557446
-VDObQRhLZ`daVoNJIae;Ae1
-04 18 4 work tb_local_protected fast 0
-=1-000ae431a4f1-6a7cb406-3a69a-6639
+!s110 1786558826
+VQfK7`Ji:@L:Wnd66X^dB01
+04 15 4 work tb_mailbox_comm fast 0
+=1-000ae431a4f1-6a7cb96a-57f97-77ab
 R1
 R8
 Z13 !s124 OEM10U1 
@@ -202,10 +206,10 @@ n@_opt2
 R12
 R6
 T_opt3
-!s110 1786558363
-VH;F^`;g<znA9<0g14eKUo2
-04 22 4 work tb_shallow_deep_arrays fast 0
-=1-000ae431a4f1-6a7cb79b-46d2a-719c
+!s110 1786561177
+VmADI6:T;f=l1zb3m;o7150
+04 10 4 work tb_classes fast 0
+=1-000ae431a4f1-6a7cc299-af4db-9547
 R1
 R8
 R13
@@ -369,7 +373,7 @@ R11
 Xdesign_sv_unit
 Z29 2design.sv|testbench.sv
 Z30 DXx6 sv_std 3 std 0 22 9oUSJO;AeEaW`l:M@^WG92
-Z31 !s110 1786552916
+!s110 1786552916
 Vo0YHCe7>XXb4c=T2^[6ZM2
 r1
 !s85 0
@@ -379,15 +383,15 @@ Io0YHCe7>XXb4c=T2^[6ZM2
 !i103 1
 S1
 R6
-Z32 w1786552915
-Z33 8design.sv
-Z34 Fdesign.sv
+w1786552915
+Z31 8design.sv
+Z32 Fdesign.sv
 !i122 204
-Z35 L0 2 0
+Z33 L0 2 0
 R21
 31
 !i113 0
-Z36 o-lint -sv -L mtiAvm -L mtiRnm -L mtiOvm -L mtiUvm -L mtiUPF -L infact
+Z34 o-lint -sv -L mtiAvm -L mtiRnm -L mtiOvm -L mtiUvm -L mtiUPF -L infact
 R11
 Xejercicio1
 R29
@@ -399,8 +403,8 @@ Il5QhU8oU^f@L5@ong7[>J1
 S1
 R6
 w1786378151
-R33
-R34
+R31
+R32
 !i122 178
 L0 5 0
 Vl5QhU8oU^f@L5@ong7[>J1
@@ -409,20 +413,20 @@ r1
 !s85 0
 31
 !i113 0
-Z37 o-sv -L mtiAvm -L mtiRnm -L mtiOvm -L mtiUvm -L mtiUPF -L infact
+Z35 o-sv -L mtiAvm -L mtiRnm -L mtiOvm -L mtiUvm -L mtiUPF -L infact
 R11
 vflipflop_d
 R29
 R30
-Z38 !s110 1786432168
+Z36 !s110 1786432168
 !i10b 1
 !s100 aFP7n>YO_8PLR6X6Q3B6@2
 If7MZlMH[0X6RkJ7BlGh@C3
 S1
 R6
-Z39 w1786432168
-R33
-R34
+Z37 w1786432168
+R31
+R32
 !i122 189
 L0 1 15
 R20
@@ -431,7 +435,7 @@ r1
 !s85 0
 31
 !i113 0
-R37
+R35
 R11
 vfsm_control
 R15
@@ -485,7 +489,7 @@ w1777534913
 8mi_modulo_top.v
 Fmi_modulo_top.v
 !i122 0
-L0 1 7
+Z38 L0 1 7
 R20
 R21
 r1
@@ -497,46 +501,46 @@ R11
 vmux21
 R29
 R30
-Z40 !s110 1786353480
+Z39 !s110 1786353480
 !i10b 1
 !s100 zVDo324`_hQGSeXha_=RZ0
 IIzn;AYRKCSc[AS0mga<HQ1
 S1
 R6
-Z41 w1786353480
-R33
-R34
+Z40 w1786353480
+R31
+R32
 !i122 164
-Z42 L0 1 10
+Z41 L0 1 10
 R20
 R21
 r1
 !s85 0
 31
 !i113 0
-R36
+R34
 R11
 Xoop_pkg
 R29
 R30
-Z43 !s110 1786558342
+Z42 !s110 1786561156
 !i10b 1
-!s100 I;`VJmL]^]_mI5F6O4E?X2
-IO]eWP:iP>JenK[f[O72>f2
+!s100 dWZF[VI<63hTH]7:KC5?T2
+In@cYW<Z]Fg==^?>[TkcDg2
 S1
 R6
-Z44 w1786558341
+Z43 w1786561155
+R31
+R32
+!i122 264
 R33
-R34
-!i122 258
-R35
-VO]eWP:iP>JenK[f[O72>f2
+Vn@cYW<Z]Fg==^?>[TkcDg2
 R21
 r1
 !s85 0
 31
 !i113 0
-R37
+R35
 R11
 vregister
 R15
@@ -581,46 +585,47 @@ R11
 Xsudoku_pkg
 R29
 R30
-Z45 !s110 1786549204
+Z44 !s110 1786549204
 !i10b 1
 !s100 HfFE]n0G`Zn58MHOUnkL<3
 I:Hem=W9i_?K6MN^fTLlLI0
 S1
 R6
-Z46 w1786549204
-R33
-R34
+Z45 w1786549204
+R31
+R32
 !i122 198
-Z47 L0 6 0
+Z46 L0 6 0
 V:Hem=W9i_?K6MN^fTLlLI0
 R21
 r1
 !s85 0
 31
 !i113 0
-R37
+R35
 R11
 vtb_classes
 R29
 R30
-R31
+DXx4 work 7 oop_pkg 0 22 n@cYW<Z]Fg==^?>[TkcDg2
+R42
 !i10b 1
-!s100 Rl58hgfA5o:PM0=c4MI[F1
-Ib=mRMfo?HJj94FmEe1EIT1
+!s100 k6V^UkXKR8nW0SRe]:U[z1
+IRQKK6aEnAYc8L6Ko:hFcM0
 S1
 R6
-R32
-Z48 8testbench.sv
-Z49 Ftestbench.sv
-!i122 204
-L0 1 6
+R43
+Z47 8testbench.sv
+Z48 Ftestbench.sv
+!i122 264
+R38
 R20
 R21
 r1
 !s85 0
 31
 !i113 0
-R36
+R35
 R11
 vtb_clonado
 R29
@@ -633,17 +638,17 @@ IC<jfFk<]VLEedVBG0nkCU0
 S1
 R6
 w1786554979
+R47
 R48
-R49
 !i122 250
-Z50 L0 1 20
+Z49 L0 1 20
 R20
 R21
 r1
 !s85 0
 31
 !i113 0
-R37
+R35
 R11
 vtb_deep_copy
 R29
@@ -656,17 +661,17 @@ IBS1o<Rj6ckgTm5mOaQW]i2
 S1
 R6
 w1786554904
+R47
 R48
-R49
 !i122 246
-R50
+R49
 R20
 R21
 r1
 !s85 0
 31
 !i113 0
-R37
+R35
 R11
 vtb_downcasting
 R29
@@ -679,17 +684,17 @@ I0JeEMRgl_k0I=bOl2i:>02
 S1
 R6
 w1786554490
+R47
 R48
-R49
 !i122 240
-R50
+R49
 R20
 R21
 r1
 !s85 0
 31
 !i113 0
-R37
+R35
 R11
 vtb_encapsulation
 R29
@@ -702,30 +707,30 @@ IFgP>:H?B=Vc?Q_WSmW<nA1
 S1
 R6
 w1786553630
+R47
 R48
-R49
 !i122 224
-L0 1 16
+Z50 L0 1 16
 R20
 R21
 r1
 !s85 0
 31
 !i113 0
-R37
+R35
 R11
 vtb_flipflop_d
 R29
 R30
-R38
+R36
 !i10b 1
 !s100 [ZIY=o6=JQQMZ^hHab[Wn2
 I11ZFYM0OG;71;;MzoA9Cg2
 S1
 R6
-R39
+R37
+R47
 R48
-R49
 !i122 189
 L0 1 39
 R20
@@ -734,7 +739,7 @@ r1
 !s85 0
 31
 !i113 0
-R37
+R35
 R11
 vtb_has_a
 R29
@@ -747,17 +752,17 @@ I0NAJ7k<n8L6G2[jZ9Xea<1
 S1
 R6
 w1786554158
+R47
 R48
-R49
 !i122 234
-R42
+R41
 R20
 R21
 r1
 !s85 0
 31
 !i113 0
-R37
+R35
 R11
 vtb_is_a
 R29
@@ -770,8 +775,8 @@ I^Y_i[NE6E<o6No?DnT`k[2
 S1
 R6
 w1786554267
+R47
 R48
-R49
 !i122 236
 L0 1 17
 R20
@@ -780,7 +785,7 @@ r1
 !s85 0
 31
 !i113 0
-R37
+R35
 R11
 vtb_local_protected
 R29
@@ -793,30 +798,53 @@ IM=JkAQ@g?]GldceNozdGi1
 S1
 R6
 w1786557425
+R47
 R48
-R49
 !i122 256
-R42
+R41
 R20
 R21
 r1
 !s85 0
 31
 !i113 0
-R37
+R35
+R11
+vtb_mailbox_comm
+R29
+R30
+DXx4 work 7 oop_pkg 0 22 P^fC?;IOjfC58BEK?3jcc0
+!s110 1786558806
+!i10b 1
+!s100 0;J6NVGSIWZAlzZhX>Zj12
+I=aAWMQ44YCNNbI]UmD:<f0
+S1
+R6
+w1786558805
+R47
+R48
+!i122 260
+R50
+R20
+R21
+r1
+!s85 0
+31
+!i113 0
+R35
 R11
 vtb_mux21
 R29
 R30
-R40
+R39
 !i10b 1
 !s100 ab7gVN5M^<XA^CX797QmY3
 IUeV8Zd5oR:a_LfU:f0UD>2
 S1
 R6
-R41
+R40
+R47
 R48
-R49
 !i122 164
 L0 1 18
 R20
@@ -825,7 +853,7 @@ r1
 !s85 0
 31
 !i113 0
-R36
+R34
 R11
 vtb_shallow_copy
 R29
@@ -838,8 +866,8 @@ InF`D@Xa`@1879XcoPdeK10
 S1
 R6
 w1786554794
+R47
 R48
-R49
 !i122 242
 L0 1 22
 R20
@@ -848,21 +876,21 @@ r1
 !s85 0
 31
 !i113 0
-R37
+R35
 R11
 vtb_shallow_deep_arrays
 R29
 R30
 DXx4 work 7 oop_pkg 0 22 O]eWP:iP>JenK[f[O72>f2
-R43
+!s110 1786558342
 !i10b 1
 !s100 oRg>c;P2PCRBmBO^>^Mhf2
 IAbM>`kXh;L_RNP6UX11150
 S1
 R6
-R44
+w1786558341
+R47
 R48
-R49
 !i122 258
 Z51 L0 1 14
 R20
@@ -871,7 +899,7 @@ r1
 !s85 0
 31
 !i113 0
-R37
+R35
 R11
 vtb_static_variables
 R29
@@ -884,29 +912,5 @@ Ij^SLGaWlKjLz>9<XCfCL:0
 S1
 R6
 w1786553478
+R47
 R48
-R49
-!i122 220
-R50
-R20
-R21
-r1
-!s85 0
-31
-!i113 0
-R37
-R11
-vtb_sudoku
-R29
-R30
-Z52 DXx4 work 10 sudoku_pkg 0 22 :Hem=W9i_?K6MN^fTLlLI0
-DXx4 work 17 testbench_sv_unit 0 22 ]HKIRi>m=0gE0f?E4:2ji2
-R45
-R20
-r1
-!s85 0
-!i10b 1
-!s100 b;Jj=;B@NQbk>LHHM>6L=2
-I7C<`nXC`SB2?Va@3:b7eH0
-!s105 testbench_sv_unit
-S1

@@ -27,7 +27,7 @@
 
     function restaurarEstadoBotones() {
         cambiarEstadoBotones(false);
-
+        
         const btnLinter = document.getElementById('btn-linter');
         if (btnLinter) btnLinter.innerText = '🔍 Comprobar (Linter)';
 
@@ -35,6 +35,9 @@
         const txCompilar = document.getElementById('btn-compilar-texto');
         if (spCompilar) spCompilar.style.display = 'none';
         if (txCompilar) txCompilar.innerText = '✅ Verificar';
+
+        const btnAI = document.getElementById('btn-ai-autocomplete');
+        if (btnAI) btnAI.innerText = '🤖 Completar IA';
     }
 
     function initSimulador() {
@@ -50,16 +53,16 @@
         ws = new WebSocket(wsUrl);
         const est = document.getElementById('estado_ws');
 
-        ws.onopen = () => {
-            if (est) {
-                est.innerText = "🟢 CONECTADO";
-                est.style.color = "#2ecc71";
-            }
+        ws.onopen = () => { 
+            if (est) { 
+                est.innerText = "🟢 CONECTADO"; 
+                est.style.color = "#2ecc71"; 
+            } 
         };
-        ws.onclose = () => {
-            if (est) {
-                est.innerText = "🔴 DESCONECTADO";
-                est.style.color = "#e74c3c";
+        ws.onclose = () => { 
+            if (est) { 
+                est.innerText = "🔴 DESCONECTADO"; 
+                est.style.color = "#e74c3c"; 
             }
             restaurarEstadoBotones();
         };
@@ -78,7 +81,7 @@
                 const errorMsg = r.detalles || r.transcript || "Error detectado.";
                 setTranscript(errorMsg, true);
                 aplicarLinter(errorMsg);
-            }
+            } 
             else if (r.status === "linter_ok") {
                 if (est) { est.innerText = "🟢 CÓDIGO CORRECTO"; est.style.color = "#2ecc71"; }
                 limpiarMarcadores();
@@ -91,6 +94,10 @@
             }
             else if (r.tipo === "transcript") {
                 appendTranscript(r.contenido || r.transcript, false);
+            }
+            else if (r.tipo === "autocompletar_respuesta") {
+                restaurarEstadoBotones();
+                insertarAutocompletado(r.completion, r.id);
             }
         };
 
@@ -711,7 +718,6 @@ package oop_pkg;
             this.hdr.copy(other.hdr);
         endfunction
 
-        // El método clone estandarizado
         function Packet clone();
             clone = new();
             clone.copy(this);
@@ -773,7 +779,7 @@ endmodule`,
                 info: `<h3>Slide 23: Métodos Virtuales</h3>
                 <p>La directiva <code>virtual</code> permite el ligamiento dinámico en tiempo de ejecución (Dynamic Dispatch). Sin ella, la llamada se resolvería según el tipo de handle y no según el objeto real.</p>`
             },
-
+            
             // --- CURIOSIDADES EXTRAS ---
             extra_virtual_vs_no: {
                 design: `// Curiosidad 1: Métodos virtuales vs no virtuales
@@ -876,34 +882,42 @@ endmodule`,
                 <p>Sin embargo, las subclases heredan y tienen acceso a miembros <code>protected</code>, mientras que los miembros <code>local</code> son estrictamente inaccesibles fuera de la clase padre original.</p>`
             },
             extra_shallow_deep_arrays: {
-                design: `// Curiosidad 4: Copias en arrays dinámicos
+                design: `// Curiosidad 4: Copias con arrays de objetos (handles)
 package oop_pkg;
+    class Elemento;
+        int valor;
+        function new(int v);
+            valor = v;
+        endfunction
+    endclass
+
     class Packet;
-        int payload[];
+        Elemento payload[3];
         
         function new();
-            payload = new[3];
-            payload = '{10, 20, 30};
+            foreach (payload[i]) begin
+                payload[i] = new((i+1)*10);
+            end
         endfunction
     endclass
 endpackage : oop_pkg`,
                 tb: `module tb_shallow_deep_arrays;
     import oop_pkg::*;
     initial begin
-        $display("=== Curiosidad: Copia superficial con arrays dinámicos ===");
+        $display("=== Curiosidad: Copia superficial con array de OBJETOS ===");
         begin
             Packet p1 = new();
-            Packet p2 = new p1; // Copia superficial
+            Packet p2 = new p1; // Copia superficial (crea nuevo array de handles)
             
-            p2.payload[0] = 99; // ¡Modifica el array dinámico!
+            p2.payload[0].valor = 99; // Modifica el objeto apuntado por el handle
             
-            $display("p1.payload[0] = %0d (¡Modificado porque el array es un handle interno!)", p1.payload[0]);
+            $display("p1.payload[0].valor = %0d (¡Modificado a 99 porque los handles son compartidos!)", p1.payload[0].valor);
         end
     end
 endmodule`,
-                info: `<h3>Curiosidad 4: Arrays Dinámicos y Shallow Copy</h3>
-                <p>En SystemVerilog, los arrays dinámicos internamente se comportan como referencias. Al hacer un <i>Shallow Copy</i>, solo se copia la referencia al array dinámico.</p>
-                <p>Como consecuencia, modificar una posición del array en el objeto clonado altera también el array en el objeto original.</p>`
+                info: `<h3>Curiosidad 4: Copias de Arrays de Objetos (Handles)</h3>
+                <p>En SystemVerilog, al hacer <code>new</code> de un objeto que tiene un array de handles de objetos (ej. <code>Elemento payload[3]</code>), la copia superficial (<i>Shallow Copy</i>) copia los handles del array por valor (apuntan a las mismas sub-instancias en memoria).</p>
+                <p>Por lo tanto, modificar una propiedad dentro de <code>p2.payload[0]</code> afectará también a <code>p1.payload[0]</code>, ya que ambos apuntan al mismo objeto en memoria.</p>`
             },
             extra_mailbox_comunicacion: {
                 design: `// Curiosidad 5: Mailbox y Transacciones
@@ -1099,12 +1113,140 @@ endmodule`,
             }));
         }
 
+        // --- ACCIONES DE AUTOCOMPLETADO E CONFIGURACIÓN ---
+        function insertarAutocompletado(completion, idEditor) {
+            const iframe = (idEditor === 'design') ? iframeDesign : iframeTB;
+            if (!iframe || !iframe.contentWindow || !iframe.contentWindow.editor) return;
+            
+            const win = iframe.contentWindow;
+            const editor = win.editor;
+            const position = editor.getPosition();
+            
+            const range = new win.monaco.Range(
+                position.lineNumber,
+                position.column,
+                position.lineNumber,
+                position.column
+            );
+            
+            const op = {
+                range: range,
+                text: completion,
+                forceMoveMarkers: true
+            };
+            
+            editor.executeEdits("ai-autocomplete", [op]);
+            setTranscript("🤖 Código insertado por el Asistente IA.", false);
+        }
+
+        function solicitarAutocompletado() {
+            // Determinar qué editor tiene foco actualmente (por defecto design)
+            let idEditor = 'design';
+            let iframe = iframeDesign;
+            
+            if (iframeTB.contentWindow && iframeTB.contentWindow.editor && iframeTB.contentWindow.editor.hasTextFocus()) {
+                idEditor = 'tb';
+                iframe = iframeTB;
+            }
+
+            if (!iframe || !iframe.contentWindow || !iframe.contentWindow.editor) return;
+
+            const editor = iframe.contentWindow.editor;
+            const position = editor.getPosition();
+            const model = editor.getModel();
+            
+            // Obtener todo el texto desde el principio del archivo hasta la posición del cursor
+            const offset = model.getOffsetAt(position);
+            const textoPrevio = model.getValue().substring(0, offset);
+
+            if (!textoPrevio.trim()) {
+                setTranscript("⚠️ Escribe algo de código antes del cursor para poder autocompletar.", true);
+                return;
+            }
+
+            if (!ws || ws.readyState !== WebSocket.OPEN) {
+                setTranscript("❌ Error: WebSocket desconectado.", true);
+                return;
+            }
+
+            // Obtener credenciales de PoliGPT guardadas en localStorage
+            const poligptEnabled = localStorage.getItem('poligpt_enabled') === 'true';
+            const poligptApiKey = localStorage.getItem('poligpt_apikey') || '';
+            const poligptApiUrl = localStorage.getItem('poligpt_url') || 'https://poligpt.upv.es/api/v1/chat/completions';
+            const poligptModel = localStorage.getItem('poligpt_model') || 'gpt-3.5-turbo';
+
+            if (poligptEnabled && !poligptApiKey.trim()) {
+                setTranscript("⚠️ Tienes activado PoliGPT pero la clave API está vacía. Configúrala en el botón de Ajustes ⚙️.", true);
+                abrirAjustes();
+                return;
+            }
+
+            cambiarEstadoBotones(true);
+            const btnAI = document.getElementById('btn-ai-autocomplete');
+            if (btnAI) btnAI.innerText = '🤖 Completando...';
+            
+            setTranscript("🤖 Solicitando autocompletado al asistente de IA...", false);
+
+            ws.send(JSON.stringify({
+                accion: "autocompletar",
+                texto: textoPrevio,
+                id: idEditor,
+                api_key: poligptEnabled ? poligptApiKey : "",
+                api_url: poligptEnabled ? poligptApiUrl : "",
+                model: poligptEnabled ? poligptModel : ""
+            }));
+        }
+
+        // --- MANEJO DE MODAL AJUSTES IA ---
+        const modal = document.getElementById('settings-modal');
+        const enableCheck = document.getElementById('poligpt-enable');
+        const apiKeyInput = document.getElementById('poligpt-apikey');
+        const urlInput = document.getElementById('poligpt-url');
+        const modelInput = document.getElementById('poligpt-model');
+
+        function abrirAjustes() {
+            if (!modal) return;
+            // Cargar valores de localStorage
+            enableCheck.checked = localStorage.getItem('poligpt_enabled') === 'true';
+            apiKeyInput.value = localStorage.getItem('poligpt_apikey') || '';
+            urlInput.value = localStorage.getItem('poligpt_url') || 'https://poligpt.upv.es/api/v1/chat/completions';
+            modelInput.value = localStorage.getItem('poligpt_model') || 'gpt-3.5-turbo';
+
+            modal.style.display = 'flex';
+        }
+
+        function cerrarAjustes() {
+            if (modal) modal.style.display = 'none';
+        }
+
+        function guardarAjustes() {
+            localStorage.setItem('poligpt_enabled', enableCheck.checked);
+            localStorage.setItem('poligpt_apikey', apiKeyInput.value.trim());
+            localStorage.setItem('poligpt_url', urlInput.value.trim());
+            localStorage.setItem('poligpt_model', modelInput.value.trim());
+            
+            cerrarAjustes();
+            setTranscript("⚙️ Ajustes de PoliGPT guardados correctamente.", false);
+        }
+
         // --- BINDINGS ---
         const btnLinter = document.getElementById('btn-linter');
         if (btnLinter) btnLinter.addEventListener('click', ejecutarLinter);
 
         const btnCompilar = document.getElementById('btn-compilar');
         if (btnCompilar) btnCompilar.addEventListener('click', compilarCodigo);
+
+        const btnAI = document.getElementById('btn-ai-autocomplete');
+        if (btnAI) btnAI.addEventListener('click', solicitarAutocompletado);
+
+        const btnSettings = document.getElementById('btn-settings');
+        if (btnSettings) btnSettings.addEventListener('click', abrirAjustes);
+
+        const btnCancel = document.getElementById('settings-cancel');
+        if (btnCancel) btnCancel.addEventListener('click', cerrarAjustes);
+
+        const btnSave = document.getElementById('settings-save');
+        if (btnSave) btnSave.addEventListener('click', guardarAjustes);
     }
 
     if (document.readyState === 'complete' || document.readyState === 'interactive') {

@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Simulador SystemVerilog - Has-A / Is-A v1.0
- * Description: Entorno de simulación de 3 frames (Testbench, Design y Transcript) para aprender conceptos de OOP con SystemVerilog.
+ * Description: Entorno de simulación de 4 cuadrantes (Testbench, Design, Transcript y Curiosidades) para aprender conceptos de OOP con SystemVerilog.
  * Version: 1.0.0
  * Author: Tu Nombre
  */
@@ -170,6 +170,14 @@ class SimuladorHasAIsA_Plugin {
                         <span id="btn-spinner-compilar" class="sim-spinner" style="display: none;"></span>
                         <span id="btn-compilar-texto">✅ Verificar</span>
                     </button>
+
+                    <button id="btn-ai-autocomplete" class="sim-btn" style="background-color: #8e44ad; color: white;" title="Autocompletar código con IA">
+                        🤖 Completar IA
+                    </button>
+
+                    <button id="btn-settings" class="sim-btn" style="background-color: #7f8c8d; color: white;" title="Configurar API de PoliGPT">
+                        ⚙️ Ajustes IA
+                    </button>
                 </div>
             </div>
 
@@ -214,6 +222,37 @@ class SimuladorHasAIsA_Plugin {
                     </div>
                 </div>
 
+            </div>
+
+            <!-- MODAL DE CONFIGURACIÓN DE IA -->
+            <div id="settings-modal" style="display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.7); align-items: center; justify-content: center;">
+                <div style="background-color: #2c3e50; color: #ecf0f1; margin: auto; padding: 20px; border: 2px solid #34495e; border-radius: 8px; width: 450px; max-width: 90%; font-family: sans-serif;">
+                    <h3 style="margin-top: 0; color: #f39c12; border-bottom: 1px solid #34495e; padding-bottom: 10px;">Configuración de Asistente IA (PoliGPT)</h3>
+                    <p style="font-size: 12px; color: #bdc3c7; line-height: 1.4;">Configura tus credenciales de PoliGPT UPV. Si lo desactivas o dejas vacío, el sistema utilizará el modelo de autocompletado offline local (Ollama).</p>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; font-size: 13px; margin-bottom: 5px; font-weight: bold; cursor: pointer;">
+                            <input type="checkbox" id="poligpt-enable" style="margin-right: 5px;"> Activar API de PoliGPT
+                        </label>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; font-size: 13px; margin-bottom: 5px;">API Key de PoliGPT:</label>
+                        <input type="password" id="poligpt-apikey" placeholder="Introduce tu clave API personal de la UPV..." style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #34495e; background-color: #1a252f; color: #fff; box-sizing: border-box;">
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; font-size: 13px; margin-bottom: 5px;">URL de la API (Endpoint):</label>
+                        <input type="text" id="poligpt-url" value="https://poligpt.upv.es/api/v1/chat/completions" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #34495e; background-color: #1a252f; color: #fff; box-sizing: border-box;">
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; font-size: 13px; margin-bottom: 5px;">Modelo a utilizar:</label>
+                        <input type="text" id="poligpt-model" value="gpt-3.5-turbo" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #34495e; background-color: #1a252f; color: #fff; box-sizing: border-box;">
+                    </div>
+                    
+                    <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                        <button id="settings-cancel" class="sim-btn" style="background-color: #e74c3c; color: white;">Cancelar</button>
+                        <button id="settings-save" class="sim-btn" style="background-color: #2ecc71; color: white;">Guardar Ajustes</button>
+                    </div>
+                </div>
             </div>
 
         </div>
