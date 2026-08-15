@@ -22481,3 +22481,297 @@ catch {echo "MY_HEX4=[examine -radix bin HEX4]"}
 # 1
 catch {echo "MY_HEX5=[examine -radix bin HEX5]"}
 # 1
+catch {force KEY[1] 0}
+# 0
+run 50ns
+catch {echo "MY_LEDR=[examine -radix bin LEDR]"}
+# MY_LEDR=0000
+# 0
+catch {echo "MY_LEDG=[examine -radix bin LEDG]"}
+# MY_LEDG=0000
+# 0
+catch {echo "MY_HEX0=[examine -radix bin HEX0]"}
+# 1
+catch {echo "MY_HEX1=[examine -radix bin HEX1]"}
+# 1
+catch {echo "MY_HEX2=[examine -radix bin HEX2]"}
+# 1
+catch {echo "MY_HEX3=[examine -radix bin HEX3]"}
+# 1
+catch {echo "MY_HEX4=[examine -radix bin HEX4]"}
+# 1
+catch {echo "MY_HEX5=[examine -radix bin HEX5]"}
+# 1
+catch {force KEY[1] 1}
+# 0
+run 50ns
+catch {echo "MY_LEDR=[examine -radix bin LEDR]"}
+# MY_LEDR=0000
+# 0
+catch {echo "MY_LEDG=[examine -radix bin LEDG]"}
+# MY_LEDG=0000
+# 0
+catch {echo "MY_HEX0=[examine -radix bin HEX0]"}
+# 1
+catch {echo "MY_HEX1=[examine -radix bin HEX1]"}
+# 1
+catch {echo "MY_HEX2=[examine -radix bin HEX2]"}
+# 1
+catch {echo "MY_HEX3=[examine -radix bin HEX3]"}
+# 1
+catch {echo "MY_HEX4=[examine -radix bin HEX4]"}
+# 1
+catch {echo "MY_HEX5=[examine -radix bin HEX5]"}
+# 1
+catch {force KEY[1] 0}
+# 0
+run 50ns
+catch {echo "MY_LEDR=[examine -radix bin LEDR]"}
+# MY_LEDR=0000
+# 0
+catch {echo "MY_LEDG=[examine -radix bin LEDG]"}
+# MY_LEDG=0000
+# 0
+catch {echo "MY_HEX0=[examine -radix bin HEX0]"}
+# 1
+catch {echo "MY_HEX1=[examine -radix bin HEX1]"}
+# 1
+catch {echo "MY_HEX2=[examine -radix bin HEX2]"}
+# 1
+catch {echo "MY_HEX3=[examine -radix bin HEX3]"}
+# 1
+catch {echo "MY_HEX4=[examine -radix bin HEX4]"}
+# 1
+catch {echo "MY_HEX5=[examine -radix bin HEX5]"}
+# 1
+catch {force KEY[1] 1}
+# 0
+run 50ns
+catch {echo "MY_LEDR=[examine -radix bin LEDR]"}
+# MY_LEDR=0000
+# 0
+catch {echo "MY_LEDG=[examine -radix bin LEDG]"}
+# MY_LEDG=0000
+# 0
+catch {echo "MY_HEX0=[examine -radix bin HEX0]"}
+# 1
+catch {echo "MY_HEX1=[examine -radix bin HEX1]"}
+# 1
+catch {echo "MY_HEX2=[examine -radix bin HEX2]"}
+# 1
+catch {echo "MY_HEX3=[examine -radix bin HEX3]"}
+# 1
+catch {echo "MY_HEX4=[examine -radix bin HEX4]"}
+# 1
+catch {echo "MY_HEX5=[examine -radix bin HEX5]"}
+# 1
+catch {force KEY[1] 1}
+# 0
+run 50ns
+catch {echo "MY_LEDR=[examine -radix bin LEDR]"}
+# MY_LEDR=0000
+# 0
+catch {echo "MY_LEDG=[examine -radix bin LEDG]"}
+# MY_LEDG=0000
+# 0
+catch {echo "MY_HEX0=[examine -radix bin HEX0]"}
+# 1
+catch {echo "MY_HEX1=[examine -radix bin HEX1]"}
+# 1
+catch {echo "MY_HEX2=[examine -radix bin HEX2]"}
+# 1
+catch {echo "MY_HEX3=[examine -radix bin HEX3]"}
+# 1
+catch {echo "MY_HEX4=[examine -radix bin HEX4]"}
+# 1
+catch {echo "MY_HEX5=[examine -radix bin HEX5]"}
+# 1
+catch {force KEY[0] 0}
+# 0
+run 50ns
+catch {echo "MY_LEDR=[examine -radix bin LEDR]"}
+# MY_LEDR=0000
+# 0
+catch {echo "MY_LEDG=[examine -radix bin LEDG]"}
+# MY_LEDG=0000
+# 0
+catch {echo "MY_HEX0=[examine -radix bin HEX0]"}
+# 1
+catch {echo "MY_HEX1=[examine -radix bin HEX1]"}
+# 1
+catch {echo "MY_HEX2=[examine -radix bin HEX2]"}
+# 1
+catch {echo "MY_HEX3=[examine -radix bin HEX3]"}
+# 1
+catch {echo "MY_HEX4=[examine -radix bin HEX4]"}
+# 1
+catch {echo "MY_HEX5=[examine -radix bin HEX5]"}
+# 1
+catch {force KEY[0] 1}
+# 0
+run 50ns
+catch {echo "MY_LEDR=[examine -radix bin LEDR]"}
+# MY_LEDR=0000
+# 0
+catch {echo "MY_LEDG=[examine -radix bin LEDG]"}
+# MY_LEDG=0000
+# 0
+catch {echo "MY_HEX0=[examine -radix bin HEX0]"}
+# 1
+catch {echo "MY_HEX1=[examine -radix bin HEX1]"}
+# 1
+catch {echo "MY_HEX2=[examine -radix bin HEX2]"}
+# 1
+catch {echo "MY_HEX3=[examine -radix bin HEX3]"}
+# 1
+catch {echo "MY_HEX4=[examine -radix bin HEX4]"}
+# 1
+catch {echo "MY_HEX5=[examine -radix bin HEX5]"}
+# 1
+catch {force KEY[0] 0}
+# 0
+run 50ns
+catch {echo "MY_LEDR=[examine -radix bin LEDR]"}
+# MY_LEDR=0000
+# 0
+catch {echo "MY_LEDG=[examine -radix bin LEDG]"}
+# MY_LEDG=0000
+# 0
+catch {echo "MY_HEX0=[examine -radix bin HEX0]"}
+# 1
+catch {echo "MY_HEX1=[examine -radix bin HEX1]"}
+# 1
+catch {echo "MY_HEX2=[examine -radix bin HEX2]"}
+# 1
+catch {echo "MY_HEX3=[examine -radix bin HEX3]"}
+# 1
+catch {echo "MY_HEX4=[examine -radix bin HEX4]"}
+# 1
+catch {echo "MY_HEX5=[examine -radix bin HEX5]"}
+# 1
+catch {force KEY[0] 1}
+# 0
+run 50ns
+catch {echo "MY_LEDR=[examine -radix bin LEDR]"}
+# MY_LEDR=0000
+# 0
+catch {echo "MY_LEDG=[examine -radix bin LEDG]"}
+# MY_LEDG=0000
+# 0
+catch {echo "MY_HEX0=[examine -radix bin HEX0]"}
+# 1
+catch {echo "MY_HEX1=[examine -radix bin HEX1]"}
+# 1
+catch {echo "MY_HEX2=[examine -radix bin HEX2]"}
+# 1
+catch {echo "MY_HEX3=[examine -radix bin HEX3]"}
+# 1
+catch {echo "MY_HEX4=[examine -radix bin HEX4]"}
+# 1
+catch {echo "MY_HEX5=[examine -radix bin HEX5]"}
+# 1
+catch {force KEY[0] 1}
+# 0
+run 50ns
+catch {echo "MY_LEDR=[examine -radix bin LEDR]"}
+# MY_LEDR=0000
+# 0
+catch {echo "MY_LEDG=[examine -radix bin LEDG]"}
+# MY_LEDG=0000
+# 0
+catch {echo "MY_HEX0=[examine -radix bin HEX0]"}
+# 1
+catch {echo "MY_HEX1=[examine -radix bin HEX1]"}
+# 1
+catch {echo "MY_HEX2=[examine -radix bin HEX2]"}
+# 1
+catch {echo "MY_HEX3=[examine -radix bin HEX3]"}
+# 1
+catch {echo "MY_HEX4=[examine -radix bin HEX4]"}
+# 1
+catch {echo "MY_HEX5=[examine -radix bin HEX5]"}
+# 1
+catch {force KEY[1] 1}
+# 0
+run 50ns
+catch {echo "MY_LEDR=[examine -radix bin LEDR]"}
+# MY_LEDR=0000
+# 0
+catch {echo "MY_LEDG=[examine -radix bin LEDG]"}
+# MY_LEDG=0000
+# 0
+catch {echo "MY_HEX0=[examine -radix bin HEX0]"}
+# 1
+catch {echo "MY_HEX1=[examine -radix bin HEX1]"}
+# 1
+catch {echo "MY_HEX2=[examine -radix bin HEX2]"}
+# 1
+catch {echo "MY_HEX3=[examine -radix bin HEX3]"}
+# 1
+catch {echo "MY_HEX4=[examine -radix bin HEX4]"}
+# 1
+catch {echo "MY_HEX5=[examine -radix bin HEX5]"}
+# 1
+catch {force KEY[2] 0}
+# 0
+run 50ns
+catch {echo "MY_LEDR=[examine -radix bin LEDR]"}
+# MY_LEDR=0001
+# 0
+catch {echo "MY_LEDG=[examine -radix bin LEDG]"}
+# MY_LEDG=0100
+# 0
+catch {echo "MY_HEX0=[examine -radix bin HEX0]"}
+# 1
+catch {echo "MY_HEX1=[examine -radix bin HEX1]"}
+# 1
+catch {echo "MY_HEX2=[examine -radix bin HEX2]"}
+# 1
+catch {echo "MY_HEX3=[examine -radix bin HEX3]"}
+# 1
+catch {echo "MY_HEX4=[examine -radix bin HEX4]"}
+# 1
+catch {echo "MY_HEX5=[examine -radix bin HEX5]"}
+# 1
+catch {force KEY[2] 1}
+# 0
+run 50ns
+catch {echo "MY_LEDR=[examine -radix bin LEDR]"}
+# MY_LEDR=0001
+# 0
+catch {echo "MY_LEDG=[examine -radix bin LEDG]"}
+# MY_LEDG=0000
+# 0
+catch {echo "MY_HEX0=[examine -radix bin HEX0]"}
+# 1
+catch {echo "MY_HEX1=[examine -radix bin HEX1]"}
+# 1
+catch {echo "MY_HEX2=[examine -radix bin HEX2]"}
+# 1
+catch {echo "MY_HEX3=[examine -radix bin HEX3]"}
+# 1
+catch {echo "MY_HEX4=[examine -radix bin HEX4]"}
+# 1
+catch {echo "MY_HEX5=[examine -radix bin HEX5]"}
+# 1
+catch {force KEY[2] 1}
+# 0
+run 50ns
+catch {echo "MY_LEDR=[examine -radix bin LEDR]"}
+# MY_LEDR=0001
+# 0
+catch {echo "MY_LEDG=[examine -radix bin LEDG]"}
+# MY_LEDG=0000
+# 0
+catch {echo "MY_HEX0=[examine -radix bin HEX0]"}
+# 1
+catch {echo "MY_HEX1=[examine -radix bin HEX1]"}
+# 1
+catch {echo "MY_HEX2=[examine -radix bin HEX2]"}
+# 1
+catch {echo "MY_HEX3=[examine -radix bin HEX3]"}
+# 1
+catch {echo "MY_HEX4=[examine -radix bin HEX4]"}
+# 1
+catch {echo "MY_HEX5=[examine -radix bin HEX5]"}
+# 1
