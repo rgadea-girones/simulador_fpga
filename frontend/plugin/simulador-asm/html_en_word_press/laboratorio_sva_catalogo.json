@@ -1,0 +1,189 @@
+[
+  {
+    "id": "B1",
+    "title": "Req/Ack con ACK exacto a 2 ciclos",
+    "difficulty": "basico",
+    "design_sv": "module dut(input logic clk,input logic rst_n,input logic req,output logic ack); logic [1:0] sh; always_ff @(posedge clk or negedge rst_n) begin if(!rst_n) begin sh<=0; ack<=0; end else begin sh<={sh[0],req}; ack<=sh[1]; end end endmodule",
+    "tb_sv": "module tb; logic clk=0,rst_n=0,req,ack; dut u0(.clk(clk),.rst_n(rst_n),.req(req),.ack(ack)); always #5 clk=~clk; assert property(@(posedge clk) disable iff(!rst_n) req |-> ##2 ack) else $error(\"ACK no llego\"); initial begin req=0; repeat(2) @(posedge clk); rst_n=1; @(posedge clk) req<=1; @(posedge clk) req<=0; repeat(6) @(posedge clk); $finish; end endmodule",
+    "concepts": ["handshake", "latencia fija", "implicacion temporal"],
+    "theory": "Tras req, ack debe ocurrir exactamente dos ciclos despues.",
+    "exercise": "Cambiar latencia a 3 ciclos.",
+    "solution": "Usar req |-> ##3 ack y ajustar DUT."
+  },
+  {
+    "id": "B2",
+    "title": "Req/Ack con timeout",
+    "difficulty": "basico",
+    "design_sv": "module dut(input logic clk,rst_n,req,output logic ack); logic [2:0] cnt; always_ff @(posedge clk or negedge rst_n) begin if(!rst_n) begin cnt<=0; ack<=0; end else begin if(req) cnt<=3; else if(cnt!=0) cnt<=cnt-1; ack<=(cnt==1); end end endmodule",
+    "tb_sv": "module tb; logic clk=0,rst_n=0,req,ack; dut u0(.clk(clk),.rst_n(rst_n),.req(req),.ack(ack)); always #5 clk=~clk; assert property(@(posedge clk) disable iff(!rst_n) req |-> ##[1:4] ack) else $error(\"Timeout\"); initial begin req=0; repeat(2) @(posedge clk); rst_n=1; @(posedge clk) req<=1; @(posedge clk) req<=0; repeat(8) @(posedge clk); $finish; end endmodule",
+    "concepts": ["timeout", "rangos temporales", "robustez"],
+    "theory": "La respuesta es valida si llega dentro de una ventana de ciclos.",
+    "exercise": "Cambiar ventana a 2..6 ciclos.",
+    "solution": "Reemplazar ##[1:4] por ##[2:6]."
+  },
+  {
+    "id": "B3",
+    "title": "Pulsos de un ciclo",
+    "difficulty": "basico",
+    "design_sv": "module dut(input logic clk,rst_n,trig,output logic pulse); always_ff @(posedge clk or negedge rst_n) begin if(!rst_n) pulse<=0; else pulse<=trig; end endmodule",
+    "tb_sv": "module tb; logic clk=0,rst_n=0,trig,pulse; dut u0(.clk(clk),.rst_n(rst_n),.trig(trig),.pulse(pulse)); always #5 clk=~clk; assert property(@(posedge clk) disable iff(!rst_n) $rose(pulse) |-> ##1 !pulse) else $error(\"Pulso invalido\"); initial begin trig=0; repeat(2) @(posedge clk); rst_n=1; @(posedge clk) trig<=1; @(posedge clk) trig<=0; repeat(4) @(posedge clk); $finish; end endmodule",
+    "concepts": ["$rose", "ancho de pulso", "temporizacion"],
+    "theory": "Un pulso unitario debe desactivarse al ciclo siguiente.",
+    "exercise": "Verificar pulso de 2 ciclos.",
+    "solution": "Usar $rose(pulse) |-> pulse ##1 !pulse."
+  },
+  {
+    "id": "B4",
+    "title": "Exclusion mutua",
+    "difficulty": "basico",
+    "design_sv": "module dut(input logic clk,rst_n,req_a,req_b,output logic gnt_a,gnt_b); always_ff @(posedge clk or negedge rst_n) begin if(!rst_n) begin gnt_a<=0; gnt_b<=0; end else begin gnt_a<=req_a&~req_b; gnt_b<=req_b&~req_a; end end endmodule",
+    "tb_sv": "module tb; logic clk=0,rst_n=0,req_a,req_b,gnt_a,gnt_b; dut u0(.clk(clk),.rst_n(rst_n),.req_a(req_a),.req_b(req_b),.gnt_a(gnt_a),.gnt_b(gnt_b)); always #5 clk=~clk; assert property(@(posedge clk) disable iff(!rst_n) !(gnt_a&&gnt_b)) else $error(\"Mutex\"); initial begin req_a=0; req_b=0; repeat(2) @(posedge clk); rst_n=1; @(posedge clk) req_a<=1; @(posedge clk) req_a<=0; @(posedge clk) req_b<=1; @(posedge clk) req_b<=0; repeat(3) @(posedge clk); $finish; end endmodule",
+    "concepts": ["seguridad", "arbitraje", "mutua exclusion"],
+    "theory": "Dos concesiones no deben activarse al mismo tiempo.",
+    "exercise": "Extender a 4 grants.",
+    "solution": "Usar $onehot0 en vector de grants."
+  },
+  {
+    "id": "B5",
+    "title": "Comprobacion de reset",
+    "difficulty": "basico",
+    "design_sv": "module dut(input logic clk,rst_n,en,output logic [3:0] cnt); always_ff @(posedge clk or negedge rst_n) if(!rst_n) cnt<=0; else if(en) cnt<=cnt+1; endmodule",
+    "tb_sv": "module tb; logic clk=0,rst_n=0,en; logic [3:0] cnt; dut u0(.clk(clk),.rst_n(rst_n),.en(en),.cnt(cnt)); always #5 clk=~clk; assert property(@(posedge clk) $rose(rst_n) |=> (cnt==0)) else $error(\"Reset\"); initial begin en=0; repeat(2) @(posedge clk); rst_n=1; @(posedge clk) en<=1; repeat(4) @(posedge clk); $finish; end endmodule",
+    "concepts": ["reset", "estado conocido", "|=>"],
+    "theory": "Tras liberar reset el estado debe ser determinista.",
+    "exercise": "Exigir cnt=0 durante dos ciclos.",
+    "solution": "$rose(rst_n) |=> (cnt==0) ##1 (cnt==0)."
+  },
+  {
+    "id": "B6",
+    "title": "Cambios de estado simples",
+    "difficulty": "basico",
+    "design_sv": "module dut(input logic clk,rst_n,start,done,output logic [1:0] state); localparam IDLE=0,BUSY=1,DONE=2; always_ff @(posedge clk or negedge rst_n) begin if(!rst_n) state<=IDLE; else case(state) IDLE: if(start) state<=BUSY; BUSY: if(done) state<=DONE; DONE: state<=IDLE; endcase end endmodule",
+    "tb_sv": "module tb; logic clk=0,rst_n=0,start,done; logic [1:0] state; dut u0(.clk(clk),.rst_n(rst_n),.start(start),.done(done),.state(state)); always #5 clk=~clk; assert property(@(posedge clk) disable iff(!rst_n) (state==0 && start) |=> (state==1)) else $error(\"FSM\"); initial begin start=0; done=0; repeat(2) @(posedge clk); rst_n=1; @(posedge clk) start<=1; @(posedge clk) start<=0; @(posedge clk) done<=1; @(posedge clk) done<=0; repeat(3) @(posedge clk); $finish; end endmodule",
+    "concepts": ["FSM", "transiciones", "propiedades de estado"],
+    "theory": "Se verifican transiciones permitidas entre estados.",
+    "exercise": "Agregar BUSY->DONE.",
+    "solution": "(state==BUSY && done) |=> (state==DONE)."
+  },
+  {
+    "id": "I1",
+    "title": "sequence y concatenacion temporal",
+    "difficulty": "intermedio",
+    "design_sv": "module dut(input logic clk,rst_n,start,output logic busy,done); logic [1:0] c; always_ff @(posedge clk or negedge rst_n) begin if(!rst_n) begin c<=0; busy<=0; done<=0; end else begin done<=0; if(start) begin c<=2; busy<=1; end else if(c!=0) begin c<=c-1; if(c==1) begin busy<=0; done<=1; end end end end endmodule",
+    "tb_sv": "module tb; logic clk=0,rst_n=0,start,busy,done; dut u0(.clk(clk),.rst_n(rst_n),.start(start),.busy(busy),.done(done)); always #5 clk=~clk; sequence s; start ##1 busy ##1 done; endsequence assert property(@(posedge clk) disable iff(!rst_n) s); initial begin start=0; repeat(2) @(posedge clk); rst_n=1; @(posedge clk) start<=1; @(posedge clk) start<=0; repeat(6) @(posedge clk); $finish; end endmodule",
+    "concepts": ["sequence", "##", "patrones"],
+    "theory": "Las secuencias encapsulan patrones temporales reutilizables.",
+    "exercise": "Insertar un ciclo extra de busy.",
+    "solution": "start ##1 busy ##1 busy ##1 done."
+  },
+  {
+    "id": "I2",
+    "title": "Rangos y first_match",
+    "difficulty": "intermedio",
+    "design_sv": "module dut(input logic clk,rst_n,req,output logic ack); logic [2:0] c; always_ff @(posedge clk or negedge rst_n) begin if(!rst_n) begin c<=0; ack<=0; end else begin if(req) c<=3; else if(c!=0) c<=c-1; ack<=(c==2)||(c==1); end end endmodule",
+    "tb_sv": "module tb; logic clk=0,rst_n=0,req,ack; dut u0(.clk(clk),.rst_n(rst_n),.req(req),.ack(ack)); always #5 clk=~clk; assert property(@(posedge clk) disable iff(!rst_n) req |-> first_match(##[1:4] ack)); initial begin req=0; repeat(2) @(posedge clk); rst_n=1; @(posedge clk) req<=1; @(posedge clk) req<=0; repeat(8) @(posedge clk); $finish; end endmodule",
+    "concepts": ["##[m:n]", "first_match", "prioridad temporal"],
+    "theory": "Se fija la primera coincidencia valida en una ventana.",
+    "exercise": "Cambiar ventana a 2..6.",
+    "solution": "first_match(##[2:6] ack)."
+  },
+  {
+    "id": "I3",
+    "title": "Repetition, throughout y until_with",
+    "difficulty": "intermedio",
+    "design_sv": "module dut(input logic clk,rst_n,go,ready_i,output logic valid,ready); always_ff @(posedge clk or negedge rst_n) begin if(!rst_n) begin valid<=0; ready<=0; end else begin ready<=ready_i; if(go) valid<=1; else if(valid&&ready) valid<=0; end end endmodule",
+    "tb_sv": "module tb; logic clk=0,rst_n=0,go,ready_i,valid,ready; dut u0(.clk(clk),.rst_n(rst_n),.go(go),.ready_i(ready_i),.valid(valid),.ready(ready)); always #5 clk=~clk; assert property(@(posedge clk) disable iff(!rst_n) $rose(valid) |-> (valid throughout (!ready[*0:$])) ##1 ready); assert property(@(posedge clk) disable iff(!rst_n) valid until_with ready); initial begin go=0; ready_i=0; repeat(2) @(posedge clk); rst_n=1; @(posedge clk) go<=1; @(posedge clk) go<=0; repeat(2) @(posedge clk); ready_i<=1; @(posedge clk) ready_i<=0; repeat(4) @(posedge clk); $finish; end endmodule",
+    "concepts": ["[*]", "throughout", "until_with"],
+    "theory": "Se mantiene una condicion durante una espera hasta evento de cierre.",
+    "exercise": "Agregar timeout maximo 5 ciclos.",
+    "solution": "Combinar con ##[1:5] ready."
+  },
+  {
+    "id": "I4",
+    "title": "Valid/Ready y estabilidad de datos",
+    "difficulty": "intermedio",
+    "design_sv": "module dut(input logic clk,rst_n,load,ready,input logic [7:0] din,output logic valid,output logic [7:0] data); always_ff @(posedge clk or negedge rst_n) begin if(!rst_n) begin valid<=0; data<=0; end else begin if(load) begin valid<=1; data<=din; end else if(valid&&ready) valid<=0; end end endmodule",
+    "tb_sv": "module tb; logic clk=0,rst_n=0,load,ready; logic [7:0] din,data; logic valid; dut u0(.clk(clk),.rst_n(rst_n),.load(load),.ready(ready),.din(din),.valid(valid),.data(data)); always #5 clk=~clk; assert property(@(posedge clk) disable iff(!rst_n) (valid && !ready) |=> $stable(data)); initial begin load=0; ready=0; din=0; repeat(2) @(posedge clk); rst_n=1; @(posedge clk) begin din<=8'hA5; load<=1; end @(posedge clk) load<=0; repeat(2) @(posedge clk); ready<=1; @(posedge clk) ready<=0; repeat(3) @(posedge clk); $finish; end endmodule",
+    "concepts": ["valid/ready", "$stable", "integridad de datos"],
+    "theory": "Si no hay aceptacion, el payload no debe variar.",
+    "exercise": "Verificar tambien que valid se mantenga.",
+    "solution": "(valid && !ready) |=> valid."
+  },
+  {
+    "id": "I5",
+    "title": "Latencia parametrizable",
+    "difficulty": "intermedio",
+    "design_sv": "module dut #(parameter int LAT=3)(input logic clk,rst_n,req,output logic ack); logic [LAT-1:0] sh; always_ff @(posedge clk or negedge rst_n) begin if(!rst_n) begin sh<='0; ack<=0; end else begin sh<={sh[LAT-2:0],req}; ack<=sh[LAT-1]; end end endmodule",
+    "tb_sv": "module tb; parameter int LAT=3; logic clk=0,rst_n=0,req,ack; dut #(.LAT(LAT)) u0(.clk(clk),.rst_n(rst_n),.req(req),.ack(ack)); always #5 clk=~clk; assert property(@(posedge clk) disable iff(!rst_n) req |-> ##LAT ack); initial begin req=0; repeat(2) @(posedge clk); rst_n=1; @(posedge clk) req<=1; @(posedge clk) req<=0; repeat(8) @(posedge clk); $finish; end endmodule",
+    "concepts": ["parametros", "reutilizacion", "latencia"],
+    "theory": "Una propiedad parametrica evita duplicar testbenches.",
+    "exercise": "Permitir LAT o LAT+1.",
+    "solution": "req |-> ##[LAT:LAT+1] ack."
+  },
+  {
+    "id": "A1",
+    "title": "Variables locales y captura de operandos",
+    "difficulty": "avanzado",
+    "design_sv": "module dut(input logic clk,rst_n,start,input logic [7:0] a,b,output logic done,output logic [7:0] res); logic [1:0] c; logic [7:0] ar,br; always_ff @(posedge clk or negedge rst_n) begin if(!rst_n) begin c<=0; done<=0; res<=0; end else begin done<=0; if(start) begin ar<=a; br<=b; c<=2; end else if(c!=0) begin c<=c-1; if(c==1) begin res<=ar+br; done<=1; end end end end endmodule",
+    "tb_sv": "module tb; logic clk=0,rst_n=0,start,done; logic [7:0] a,b,res; dut u0(.clk(clk),.rst_n(rst_n),.start(start),.a(a),.b(b),.done(done),.res(res)); always #5 clk=~clk; property p; logic [7:0] va,vb; @(posedge clk) disable iff(!rst_n) (start,va=a,vb=b) |-> ##2 (done && res==va+vb); endproperty assert property(p); initial begin start=0;a=0;b=0; repeat(2) @(posedge clk); rst_n=1; @(posedge clk) begin a<=3; b<=4; start<=1; end @(posedge clk) start<=0; repeat(6) @(posedge clk); $finish; end endmodule",
+    "concepts": ["variables locales", "captura temporal", "consistencia"],
+    "theory": "Se comparan resultados con operandos historicos, no con valores corrientes.",
+    "exercise": "Agregar soporte para resta.",
+    "solution": "Capturar opcode y elegir operacion esperada."
+  },
+  {
+    "id": "A2",
+    "title": "Multiplicador multiciclo",
+    "difficulty": "avanzado",
+    "design_sv": "module dut(input logic clk,rst_n,start,input logic [7:0] a,b,output logic done,output logic [15:0] p); logic [1:0] c; logic [7:0] ar,br; always_ff @(posedge clk or negedge rst_n) begin if(!rst_n) begin c<=0; done<=0; p<=0; end else begin done<=0; if(start) begin ar<=a; br<=b; c<=3; end else if(c!=0) begin c<=c-1; if(c==1) begin p<=ar*br; done<=1; end end end end endmodule",
+    "tb_sv": "module tb; logic clk=0,rst_n=0,start,done; logic [7:0] a,b; logic [15:0] p; dut u0(.clk(clk),.rst_n(rst_n),.start(start),.a(a),.b(b),.done(done),.p(p)); always #5 clk=~clk; property p_mul; logic [7:0] va,vb; @(posedge clk) disable iff(!rst_n) (start,va=a,vb=b) |-> ##3 (done && p==va*vb); endproperty assert property(p_mul); initial begin start=0;a=0;b=0; repeat(2) @(posedge clk); rst_n=1; @(posedge clk) begin a<=6; b<=7; start<=1; end @(posedge clk) start<=0; repeat(8) @(posedge clk); $finish; end endmodule",
+    "concepts": ["multiciclo", "start-done", "captura"],
+    "theory": "Una sola propiedad valida simultaneamente timing y funcionalidad.",
+    "exercise": "Permitir done en 3..4.",
+    "solution": "Usar ##[3:4] y verificar p en la coincidencia."
+  },
+  {
+    "id": "A3",
+    "title": "Pipeline de latencia desconocida",
+    "difficulty": "avanzado",
+    "design_sv": "module dut(input logic clk,rst_n,in_v,output logic out_v); logic [2:0] l; always_ff @(posedge clk or negedge rst_n) begin if(!rst_n) begin l<=3'b101; out_v<=0; end else begin l<={l[1:0],l[2]^l[1]}; out_v<= in_v ? 0 : (l==3'b011); end end endmodule",
+    "tb_sv": "module tb; logic clk=0,rst_n=0,in_v,out_v; dut u0(.clk(clk),.rst_n(rst_n),.in_v(in_v),.out_v(out_v)); always #5 clk=~clk; assert property(@(posedge clk) disable iff(!rst_n) in_v |-> first_match(##[2:5] out_v)); initial begin in_v=0; repeat(2) @(posedge clk); rst_n=1; @(posedge clk) in_v<=1; @(posedge clk) in_v<=0; repeat(15) @(posedge clk); $finish; end endmodule",
+    "concepts": ["latencia variable", "first_match", "ventana"],
+    "theory": "Modela pipelines con variacion acotada de respuesta.",
+    "exercise": "Evitar solape de entradas.",
+    "solution": "No aceptar nuevo in_v hasta detectar out_v."
+  },
+  {
+    "id": "A4",
+    "title": "FIFO simplificada y scoreboarding conceptual",
+    "difficulty": "avanzado",
+    "design_sv": "module dut(input logic clk,rst_n,push,pop,input logic [7:0] din,output logic [7:0] dout,output logic full,empty); logic [7:0] mem; logic v; always_ff @(posedge clk or negedge rst_n) begin if(!rst_n) begin v<=0; mem<=0; dout<=0; end else begin if(push && !v) begin mem<=din; v<=1; end if(pop && v) begin dout<=mem; v<=0; end end end assign full=v; assign empty=~v; endmodule",
+    "tb_sv": "module tb; logic clk=0,rst_n=0,push,pop,full,empty; logic [7:0] din,dout,ref_q; dut u0(.clk(clk),.rst_n(rst_n),.push(push),.pop(pop),.din(din),.dout(dout),.full(full),.empty(empty)); always #5 clk=~clk; always_ff @(posedge clk) if(push && !full) ref_q<=din; assert property(@(posedge clk) disable iff(!rst_n) (pop && !empty) |=> (dout==ref_q)); initial begin push=0; pop=0; din=0; repeat(2) @(posedge clk); rst_n=1; @(posedge clk) begin din<=8'hAA; push<=1; end @(posedge clk) push<=0; @(posedge clk) pop<=1; @(posedge clk) pop<=0; repeat(4) @(posedge clk); $finish; end endmodule",
+    "concepts": ["FIFO", "scoreboard", "referencia"],
+    "theory": "El scoreboard modela el comportamiento esperado y se compara con DUT.",
+    "exercise": "Usar cola SV en vez de registro simple.",
+    "solution": "Reemplazar ref_q por queue push_back/pop_front."
+  },
+  {
+    "id": "A5",
+    "title": "IDs de transaccion y deteccion de huerfanas",
+    "difficulty": "avanzado",
+    "design_sv": "module dut(input logic clk,rst_n,input logic req_valid,input logic [1:0] req_id,output logic rsp_valid,output logic [1:0] rsp_id); logic [1:0] pid; logic pv; always_ff @(posedge clk or negedge rst_n) begin if(!rst_n) begin pv<=0; rsp_valid<=0; rsp_id<=0; end else begin rsp_valid<=pv; rsp_id<=pid; pv<=req_valid; pid<=req_id; end end endmodule",
+    "tb_sv": "module tb; logic clk=0,rst_n=0,req_valid,rsp_valid; logic [1:0] req_id,rsp_id; logic [3:0] outstanding; dut u0(.clk(clk),.rst_n(rst_n),.req_valid(req_valid),.req_id(req_id),.rsp_valid(rsp_valid),.rsp_id(rsp_id)); always #5 clk=~clk; always_ff @(posedge clk or negedge rst_n) begin if(!rst_n) outstanding<=0; else begin if(req_valid) outstanding[req_id]<=1; if(rsp_valid) outstanding[rsp_id]<=0; end end assert property(@(posedge clk) disable iff(!rst_n) rsp_valid |-> outstanding[rsp_id]); initial begin req_valid=0; req_id=0; repeat(2) @(posedge clk); rst_n=1; @(posedge clk) begin req_valid<=1; req_id<=2'd3; end @(posedge clk) req_valid<=0; repeat(6) @(posedge clk); $finish; end endmodule",
+    "concepts": ["IDs", "correlacion", "orfandad"],
+    "theory": "Toda respuesta debe tener solicitud previa para el mismo ID.",
+    "exercise": "Prohibir req duplicado por ID pendiente.",
+    "solution": "req_valid |-> !outstanding[req_id]."
+  },
+  {
+    "id": "A6",
+    "title": "Cobertura funcional con cover property",
+    "difficulty": "avanzado",
+    "design_sv": "module dut(input logic clk,rst_n,start,output logic busy,done); logic [1:0] c; always_ff @(posedge clk or negedge rst_n) begin if(!rst_n) begin c<=0; busy<=0; done<=0; end else begin done<=0; if(start) begin c<=2; busy<=1; end else if(c!=0) begin c<=c-1; if(c==1) begin busy<=0; done<=1; end end end end endmodule",
+    "tb_sv": "module tb; logic clk=0,rst_n=0,start,busy,done; dut u0(.clk(clk),.rst_n(rst_n),.start(start),.busy(busy),.done(done)); always #5 clk=~clk; sequence s; start ##1 busy ##1 done; endsequence cover property(@(posedge clk) disable iff(!rst_n) s); assert property(@(posedge clk) disable iff(!rst_n) start |-> ##2 done); initial begin start=0; repeat(2) @(posedge clk); rst_n=1; @(posedge clk) start<=1; @(posedge clk) start<=0; repeat(6) @(posedge clk); $finish; end endmodule",
+    "concepts": ["cover property", "metricas", "calidad de estimulo"],
+    "theory": "La cobertura confirma que el test ejercito escenarios relevantes.",
+    "exercise": "Cubrir dos transacciones consecutivas.",
+    "solution": "cover property(s ##[1:3] s)."
+  }
+]

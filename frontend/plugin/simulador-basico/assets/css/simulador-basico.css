@@ -1,0 +1,134 @@
+.simulador-basico-plugin {
+    max-width: 1200px;
+    margin: 20px auto;
+    background: #111827;
+    border: 1px solid #2d3748;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    font-family: Arial, Helvetica, sans-serif;
+    color: #e5e7eb;
+}
+
+.simulador-basico-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: linear-gradient(180deg, #1f2937 0%, #0f172a 100%);
+    border-bottom: 1px solid #334155;
+}
+
+.simulador-basico-title {
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    font-size: 16px;
+    color: #f8fafc;
+}
+
+.simulador-basico-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.sim-basico-run,
+.sim-basico-clear {
+    border: none;
+    border-radius: 6px;
+    padding: 8px 14px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: opacity 0.2s ease;
+}
+
+.sim-basico-run {
+    background: #2563eb;
+    color: #ffffff;
+}
+
+.sim-basico-clear {
+    background: #475569;
+    color: #ffffff;
+}
+
+.sim-basico-run:hover,
+.sim-basico-clear:hover {
+    opacity: 0.92;
+}
+
+.simulador-basico-layout {
+    display: grid;
+    grid-template-columns: minmax(300px, 1fr) minmax(300px, 1.3fr);
+    gap: 0;
+    min-height: 500px;
+}
+
+.sim-panel {
+    min-height: 420px;
+    background: #0f172a;
+}
+
+.sim-panel-left {
+    border-right: 1px solid #334155;
+    display: flex;
+    flex-direction: column;
+}
+
+.panel-title {
+    background: #1e293b;
+    padding: 10px 14px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #e2e8f0;
+    border-bottom: 1px solid #334155;
+}
+
+#sim-basico-editor {
+    width: 100%;
+    min-height: 430px;
+    height: 430px;
+    background: #111827;
+    border: none;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.sim-console {
+    height: 430px;
+    overflow-y: auto;
+    background: #020817;
+    color: #86efac;
+    padding: 16px;
+    box-sizing: border-box;
+    font-family: "Consolas", "Courier New", monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.sim-transcript-line {
+    display: block;
+    margin-bottom: 8px;
+}
+
+.sim-transcript-line.error {
+    color: #fca5a5;
+}
+
+.sim-transcript-line.ok {
+    color: #86efac;
+}
+
+@media (max-width: 768px) {
+    .simulador-basico-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .sim-panel-left {
+        border-right: none;
+        border-bottom: 1px solid #334155;
+    }
+}

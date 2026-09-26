@@ -1,0 +1,10 @@
+read_uhdm slpp_all/surelog.uhdm
+hierarchy -auto-top
+proc
+flatten
+opt
+techmap * t:$dff %d t:$adff %d t:$dffe %d t:$adffe %d t:$sdff %d t:$sdffe %d t:$sdffce %d t:$mux %d
+opt
+abc -g AND,OR,XOR
+opt_clean
+write_json uhdm_fix.json

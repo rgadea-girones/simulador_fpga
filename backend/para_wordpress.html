@@ -1,11 +1,18 @@
 <!-- 1. Cargar la librería de interactividad -->
 <script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.1/dist/svg-pan-zoom.min.js"></script>
 
-<!-- 2. El botón para pedir el esquema -->
-<button id="btn-ver-esquema"
-    style="padding: 10px 20px; background-color: #0073aa; color: white; border: none; border-radius: 4px; cursor: pointer;">
-    👁️ Ver Esquema de Hardware
-</button>
+<!-- 2. El botón y selector para pedir el esquema -->
+<div style="display: flex; gap: 10px; align-items: center; margin-bottom: 10px;">
+    <select id="sintesis-engine"
+        style="padding: 9px 12px; background-color: #2c3e50; color: white; border: 1px solid #555; border-radius: 4px; cursor: pointer; font-size: 13px; outline: none;">
+        <option value="yosys" selected>⚡ Yosys Nativo</option>
+        <option value="surelog_uhdm">🚀 Surelog + UHDM (Avanzado)</option>
+    </select>
+    <button id="btn-ver-esquema"
+        style="padding: 10px 20px; background-color: #0073aa; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
+        👁️ Ver Esquema de Hardware
+    </button>
+</div>
 
 <!-- 3. La pizarra interactiva -->
 <div id="visor-esquema"
@@ -151,15 +158,18 @@ endmodule`,
         ws.send(JSON.stringify({ accion: "set_key", key_index: i, valor: v }));
     }
 
-    // --- BOTÓN DE VER ESQUEMA (YOSYS) ---
+    // --- BOTÓN DE VER ESQUEMA (YOSYS / SURELOG+UHDM) ---
     document.getElementById('btn-ver-esquema').addEventListener('click', () => {
         const codigoAlumno = window.editor.getValue();
+        const selectorEngine = document.getElementById('sintesis-engine');
+        const engine = selectorEngine ? selectorEngine.value : 'yosys';
         document.getElementById('visor-esquema').innerHTML = '<p style="text-align:center; color:#555; margin-top:230px;">⚙️ Sintetizando Jerarquía...</p>';
 
         ws.send(JSON.stringify({
             accion: "ver_esquema",
             codigo: codigoAlumno,
-            modulo: "auto" // <--- Pedimos la vista desde arriba del todo
+            modulo: "auto",
+            motor: engine
         }));
     });
 
@@ -177,195 +187,23 @@ endmodule`,
             elementoSvg.style.width = "100%";
             elementoSvg.style.height = "100%";
 
-            // 🚀 1. EL ESCUADRÓN DE RESCATE DE BUSES 🚀
-            // Antes de aplicar nuestro CSS general, buscamos los cables que netlistsvg hizo un poco más gruesos
-            const todosLosCables = elementoSvg.querySelectorAll('path, line');
-            todosLosCables.forEach(cable => {
-                // netlistsvg suele poner stroke-width="2" a los buses
-                const anchoAtributo = cable.getAttribute('stroke-width');
-                const anchoEstilo = cable.style.strokeWidth;
-
-                if (anchoAtributo === '2' || anchoEstilo === '2' || anchoEstilo === '2px') {
-                    // ¡Te pillé, bus! Le ponemos una clase nuestra para salvarlo
-                    cable.classList.add('mi-bus-morado');
-                }
-            });
-
-            // --- INICIO DEL HACK DE COLORES ---
-            // Buscamos la etiqueta <style> original que pone netlistsvg
-            const estiloOriginal = elementoSvg.querySelector('style');
-            if (estiloOriginal) {
-                estiloOriginal.innerHTML = `
-                    /* 1. Color base de los cables (Azul estándar) */
-                    svg { stroke: #34495e; fill: none; }
-                    path, line { stroke: #2980b9; stroke-width: 1.5px; }
-/* 🚀 LA MAGIA: Pintamos de Morado Grueso los buses que rescatamos 🚀 */
-                    path.mi-bus-morado, line.mi-bus-morado {
-                        stroke: #8e44ad !important;
-                        stroke-width: 3.5px !important;
-                    }
-                    
-                    /* 2. Textos generales de los cables externos */
-                    text { fill: #2c3e50; font-family: 'Segoe UI', Tahoma, Arial, sans-serif; font-weight: bold; stroke: none; }
-                    
-                    /* 🚀 LA SOLUCIÓN AL TEXTO DESBORDADO 🚀 */
-                    /* Hacemos los nombres de los pines más pequeños y sin negrita para que quepan en la caja */
-                    g[s\\:type="inputPort"] text, g[s\\:type="outputPort"] text { 
-                        font-size: 8px ; 
-                        font-weight: normal; 
-                        font-family: 'Courier New', monospace;
-                    }
-                    
-                    /* Título principal del submódulo (ej. FSM_MEALY) centrado y elegante */
-                    g[s\\:type="generic"] > text {
-                        font-size: 12px;
-                        fill: #0e6655; /* Un verde más oscuro para que contraste */
-                    }
-                    /* ==================================== */
-
-                    /* 3. Puntos de unión y Burbujas NOT */
-                    circle { fill: #2980b9; stroke: none; }
-                    
-                    /* 4. Entradas e Inputs / Salidas y Outputs */
-                    g[s\\:type="inputExt"] path, g[s\\:type="outputExt"] path { fill: #d6eaf8; stroke: #2980b9; stroke-width: 1.5px; }
-                    g[s\\:type="inputExt"] text, g[s\\:type="outputExt"] text { fill: #154360; font-size: 16px; }
-                    
-                    /* 5. Constantes */
-                    g[s\\:type="constant"] rect { fill: #e5e7e9; stroke: #95a5a6; stroke-width: 1.5px; }
-                    g[s\\:type="constant"] text { fill: #7f8c8d; font-size: 11px; }
-                    
-                    /* 6. Flip-Flops y Latches */
-                    rect { fill: #fcf3cf; stroke: #d4ac0d; stroke-width: 1.5px; }
-                    
-                    /* 7. Multiplexores */
-                    polygon { fill: #f8f9f9; stroke: #34495e; stroke-width: 1.5px; }
-                `;
-            } // <--- ¡ESTA ES LA LLAVE QUE TE FALTA!
-            // --- FIN DEL HACK DE COLORES ---
-            // =================================================================
-            // 🚀 INICIO DEL HACK DEL FLIP-FLOP V3 (AJUSTE MILIMÉTRICO)
-            // =================================================================
-            const textos = elementoSvg.querySelectorAll('text');
-            textos.forEach(txt => {
-                const contenido = txt.textContent.trim();
-
-                // 1. Ocultar nombre y cuadrar
-                if (contenido.startsWith('$') && contenido.includes('dff')) {
-                    txt.textContent = 'FF-D';
-                    txt.style.fill = '#b9770e';
-                    txt.style.fontSize = '14px';
-                    txt.setAttribute('dx', '-10');
-                }
-                // 2. R y Burbuja
-                else if (contenido === 'ARST' || contenido === 'RST') {
-                    txt.textContent = 'R';
-                    txt.style.fontSize = '12px';
-                    txt.setAttribute('dx', '5'); // Separamos más la 'R' hacia la derecha para que no toque el borde
-                    txt.setAttribute('dy', '7');
-
-                    const ns = "http://www.w3.org/2000/svg";
-                    const burbuja = document.createElementNS(ns, "circle");
-
-                    const x = parseFloat(txt.getAttribute('x'));
-                    const y = parseFloat(txt.getAttribute('y'));
-
-                    // Ajuste milimétrico: 
-                    // (x - 3) lo mete más a la derecha para que muerda el borde de la caja
-                    // (y - 1.5) lo baja un poquito para que el cable lo atraviese por todo el centro
-                    burbuja.setAttribute('cx', x - 2);
-                    burbuja.setAttribute('cy', y + 3.5);
-                    burbuja.setAttribute('r', '3.5');
-
-                    burbuja.style.fill = '#fcf3cf';
-                    burbuja.style.stroke = '#2980b9';
-                    burbuja.style.strokeWidth = '1.5px';
-
-                    txt.parentNode.appendChild(burbuja);
-                }
-                // 3. Cuadrar el reloj (►)
-                else if (contenido === 'CLK' || contenido === 'C') {
-                    txt.textContent = '►';
-                    txt.style.fontSize = '12px';
-
-                    // Ajuste milimétrico:
-                    // dx='-3' lo mueve hacia la derecha, justo al límite interno de la caja
-                    // dy='3.5' lo baja para que la punta apunte directamente al cable azul
-                    txt.setAttribute('dx', '2');
-                    txt.setAttribute('dy', '7');
-                }
-                // 3. Cuadrar la entrada D)
-                else if (contenido === 'D') {
-                    txt.textContent = 'D';
-                    txt.style.fontSize = '12px';
-
-                    // Ajuste milimétrico:
-                    // dx='-3' lo mueve hacia la derecha, justo al límite interno de la caja
-                    // dy='3.5' lo baja para que la punta apunte directamente al cable azul
-                    txt.setAttribute('dx', '4.5');
-                    txt.setAttribute('dy', '7.5');
-                }
-                // 3. Cuadrar la salida Q)
-                else if (contenido === 'Q') {
-                    txt.textContent = 'Q';
-                    txt.style.fontSize = '12px';
-
-                    // Ajuste milimétrico:
-                    // dx='-3' lo mueve hacia la derecha, justo al límite interno de la caja
-                    // dy='3.5' lo baja para que la punta apunte directamente al cable azul
-                    txt.setAttribute('dx', '-13.5');
-                    txt.setAttribute('dy', '7');
-                }
-            });
-            // =================================================================
-            // FIN DEL HACK DEL FLIP-FLOP
-            // =================================================================
-
-            // =================================================================
-            // 🚀 INICIO DEL HACK DE NAVEGACIÓN JERÁRQUICA (DOBLE CLIC) V2
-            // =================================================================
             const celdas = elementoSvg.querySelectorAll('g');
             celdas.forEach(celda => {
                 let tipoModulo = celda.getAttribute('s:type');
-                if (!tipoModulo) return; // Si no tiene tipo, pasamos al siguiente
+                if (!tipoModulo && celda.getAttribute('s:generic') === 'body') {
+                    const parent = celda.parentElement;
+                    if (parent) tipoModulo = parent.getAttribute('s:type');
+                }
 
-                // --- LA CORRECCIÓN MÁGICA Y EL AJUSTE DE TAMAÑO DE PUERTOS ---
                 if (tipoModulo === 'generic') {
-                    // Cogemos TODOS los textos que hay dentro de esta caja verde
                     const textosCaja = celda.querySelectorAll('text');
-
                     if (textosCaja.length > 0) {
-                        // 1. El primer texto siempre es el título (ej. FSM_MEALY o contador)
-                        tipoModulo = textosCaja[0].textContent.trim(); // Rescatamos el nombre para el doble clic
-
-                        // Le damos estilo de título (Grande y verde oscuro)
-                        textosCaja[0].style.fontSize = '12px';
-                        textosCaja[0].style.fontWeight = 'bold';
-                        textosCaja[0].style.fill = '#0e6655';
-
-                        // 2. ¡LA SOLUCIÓN! Todos los demás textos (del 1 en adelante) son los puertos.
-                        // Los encogemos por la fuerza usando JavaScript puro.
-                        for (let i = 1; i < textosCaja.length; i++) {
-                            textosCaja[i].style.fontSize = '8px'; // <-- Aquí puedes probar 7px u 8px
-                            textosCaja[i].style.fontFamily = "'Courier New', monospace";
-                            textosCaja[i].style.fontWeight = 'normal';
-                            textosCaja[i].style.fill = '#2c3e50';
-
-                            // Opcional: Desplazamos un poco los textos para que no se peguen tanto a la línea
-                            const xActual = parseFloat(textosCaja[i].getAttribute('x'));
-                            textosCaja[i].setAttribute('x', xActual > 0 ? xActual - 2 : xActual + 2);
-                        }
+                        tipoModulo = textosCaja[0].textContent.trim();
                     }
                 }
-                // ----------------------------
-                // ----------------------------
 
-                // Lista de cosas del dibujo que NO son submódulos interactivos
-                const ignorar = ['inputExt', 'outputExt', 'inputPort', 'outputPort', 'constant', 'split', 'join', 'generic'];
-
-                // Es un submódulo interactivo si NO está en la lista de ignorar y NO empieza por "$" (celdas internas de Yosys)
-                if (!ignorar.includes(tipoModulo) && !tipoModulo.startsWith('$')) {
-
-                    // Lo pintamos de verde menta para que invite a hacer clic
+                const ignorar = ['inputExt', 'outputExt', 'inputPort', 'outputPort', 'constant', 'split', 'join', 'generic', 'mux', 'and', 'nand', 'or', 'nor', 'xor', 'xnor', 'not', 'add', 'sub', 'eq', 'ne', 'lt', 'le', 'gt', 'ge', 'dff', 'dffn', 'dlatch'];
+                if (tipoModulo && !ignorar.includes(tipoModulo) && !tipoModulo.startsWith('$')) {
                     const rect = celda.querySelector('rect');
                     if (rect) {
                         rect.style.fill = '#e8f8f5';
@@ -373,26 +211,30 @@ endmodule`,
                         rect.style.cursor = 'pointer';
                     }
 
-                    // Tooltip nativo
                     const titulo = document.createElementNS("http://www.w3.org/2000/svg", "title");
                     titulo.textContent = "🖱️ Doble clic para entrar al módulo: " + tipoModulo;
                     celda.appendChild(titulo);
 
-                    // Al hacer doble clic, pedimos el submódulo real al servidor
                     celda.addEventListener('dblclick', (e) => {
-                        e.stopPropagation(); // Evita que el clic se vuelva loco si hay cajas anidadas
-                        document.getElementById('visor-esquema').innerHTML = `<p style="text-align:center; color:#555; margin-top:230px;">🔍 Entrando al submódulo ${tipoModulo}...</p>`;
-                        ws.send(JSON.stringify({
-                            accion: "ver_esquema",
-                            codigo: window.editor.getValue(),
-                            modulo: tipoModulo // Ahora sí enviará "FSM_MEALY" o "contador"
-                        }));
+                        e.stopPropagation();
+                        const selectorEngine = document.getElementById('sintesis-engine');
+                        const engine = selectorEngine ? selectorEngine.value : 'yosys';
+
+                        const visor = document.getElementById('visor-esquema');
+                        if (visor) {
+                            visor.innerHTML = `<p style="text-align:center; color:#555; margin-top:230px;">🔍 Entrando al submódulo ${tipoModulo}...</p>`;
+                        }
+                        if (ws && ws.readyState === WebSocket.OPEN) {
+                            ws.send(JSON.stringify({
+                                accion: "ver_esquema",
+                                codigo: window.editor ? window.editor.getValue() : "",
+                                modulo: tipoModulo,
+                                motor: engine
+                            }));
+                        }
                     });
                 }
             });
-            // =================================================================
-            // FIN DEL HACK DE NAVEGACIÓN
-            // =================================================================
 
             if (panZoomInstance) { panZoomInstance.destroy(); }
 

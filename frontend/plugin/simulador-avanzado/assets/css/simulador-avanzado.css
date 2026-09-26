@@ -1,0 +1,329 @@
+.simulador-avanzado-plugin {
+    max-width: 1350px;
+    margin: 20px auto;
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #f8fafc;
+}
+
+.simulador-avanzado-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+    border-bottom: 1px solid #334155;
+}
+
+.simulador-avanzado-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.sim-title-main {
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    font-size: 17px;
+    color: #ffffff;
+}
+
+.sim-badge {
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 6px;
+    letter-spacing: 0.05em;
+    box-shadow: 0 2px 6px rgba(37, 99, 235, 0.4);
+}
+
+.simulador-avanzado-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.sim-avanzado-run,
+.sim-avanzado-clear {
+    border: none;
+    border-radius: 7px;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 13px;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.sim-avanzado-run {
+    background: #2563eb;
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+.sim-avanzado-run:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
+}
+
+.sim-avanzado-clear {
+    background: #475569;
+    color: #ffffff;
+}
+
+.sim-avanzado-clear:hover {
+    background: #334155;
+}
+
+/* FILA SUPERIOR: DOBLE EDITOR MONACO (50% / 50%) */
+.simulador-avanzado-top-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    min-height: 400px;
+}
+
+.sim-panel {
+    background: #0f172a;
+    display: flex;
+    flex-direction: column;
+}
+
+.sim-panel-left {
+    border-right: 1px solid #334155;
+}
+
+.panel-title {
+    background: #1e293b;
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #e2e8f0;
+    border-bottom: 1px solid #334155;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.panel-subtitle {
+    font-size: 11px;
+    font-weight: 400;
+    color: #94a3b8;
+    font-family: monospace;
+}
+
+.monaco-editor-container {
+    width: 100%;
+    height: 380px;
+    flex: 1;
+    background: #090d16;
+    border: none;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+/* FILA INFERIOR (SUPERPONIBLE / PESTAÑAS) */
+.simulador-avanzado-bottom-layout {
+    width: 100%;
+    border-top: 2px solid #334155;
+    background: #0f172a;
+}
+
+.bottom-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #1e293b;
+    border-bottom: 1px solid #334155;
+    padding: 0 12px;
+}
+
+.bottom-tabs {
+    display: flex;
+    gap: 4px;
+}
+
+.tab-btn {
+    background: transparent;
+    color: #94a3b8;
+    border: none;
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.tab-btn:hover:not(.disabled) {
+    color: #f8fafc;
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.tab-btn.active {
+    color: #38bdf8;
+    border-bottom-color: #38bdf8;
+    background: #0f172a;
+}
+
+.tab-btn.disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.status-indicator {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 10px;
+    background: #334155;
+    color: #cbd5e1;
+}
+
+.status-indicator.connected {
+    background: rgba(16, 185, 129, 0.2);
+    color: #34d399;
+    border: 1px solid rgba(52, 211, 153, 0.3);
+}
+
+.status-indicator.disconnected {
+    background: rgba(239, 68, 68, 0.2);
+    color: #fca5a5;
+    border: 1px solid rgba(252, 165, 165, 0.3);
+}
+
+.vcd-badge {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 10px;
+    background: #334155;
+    color: #94a3b8;
+}
+
+.vcd-badge.available {
+    background: #059669;
+    color: #ffffff;
+    box-shadow: 0 0 8px rgba(5, 150, 105, 0.5);
+}
+
+.bottom-panel-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.vcd-btn-sm {
+    background: #334155;
+    color: #f8fafc;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.vcd-btn-sm:hover {
+    background: #475569;
+}
+
+.bottom-panel-content {
+    width: 100%;
+    min-height: 480px;
+    position: relative;
+    background: #020617;
+}
+
+.bottom-pane {
+    display: none;
+    width: 100%;
+    height: 480px;
+}
+
+.bottom-pane.active {
+    display: block;
+}
+
+.sim-console {
+    width: 100%;
+    height: 480px;
+    overflow-y: auto;
+    background: #020617;
+    color: #86efac;
+    padding: 16px;
+    box-sizing: border-box;
+    font-family: "Consolas", "Fira Code", "Courier New", monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.sim-transcript-line {
+    display: block;
+    margin-bottom: 6px;
+}
+
+.sim-transcript-line.error {
+    color: #fca5a5;
+}
+
+.sim-transcript-line.ok {
+    color: #86efac;
+}
+
+.sim-transcript-line.vcd-notify {
+    color: #60a5fa;
+    font-weight: bold;
+    padding: 6px 10px;
+    background: rgba(37, 99, 235, 0.15);
+    border-left: 3px solid #3b82f6;
+    margin: 8px 0;
+    border-radius: 0 4px 4px 0;
+}
+
+.vcd-iframe-container {
+    width: 100%;
+    height: 480px;
+    background: #111827;
+}
+
+.vcd-iframe-container iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+    background: #111827;
+}
+
+@media (max-width: 900px) {
+    .simulador-avanzado-top-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .sim-panel-left {
+        border-right: none;
+        border-bottom: 1px solid #334155;
+    }
+
+    .bottom-pane,
+    .sim-console,
+    .vcd-iframe-container {
+        height: 380px;
+    }
+}

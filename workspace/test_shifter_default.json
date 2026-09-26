@@ -1,0 +1,111 @@
+{
+  "creator": "Synlig (git sha1 2d838edc9, g++ 12.2.0-14 -fPIC -O3)",
+  "modules": {
+    "shift_register": {
+      "attributes": {
+        "top": "00000000000000000000000000000001",
+        "src": "/root/simulador_fpga/workspace/test_shifter2d.sv:1.1-18.10"
+      },
+      "parameter_default_values": {
+        "WIDTH": "00000000000000000000000000001000"
+      },
+      "ports": {
+        "clk": {
+          "direction": "input",
+          "bits": [ 2 ]
+        },
+        "rst_n": {
+          "direction": "input",
+          "bits": [ 3 ]
+        },
+        "d_in": {
+          "direction": "input",
+          "bits": [ 4, 5, 6, 7 ]
+        },
+        "shift_en": {
+          "direction": "input",
+          "bits": [ 8 ]
+        },
+        "q_out": {
+          "direction": "output",
+          "bits": [ 9, 10, 11, 12 ]
+        }
+      },
+      "cells": {
+        "$auto$ff.cc:266:slice$10": {
+          "hide_name": 1,
+          "type": "$adffe",
+          "parameters": {
+            "ARST_POLARITY": "00000000000000000000000000000000",
+            "ARST_VALUE": "00000000000000000000000000000000",
+            "CLK_POLARITY": "00000000000000000000000000000001",
+            "EN_POLARITY": "00000000000000000000000000000001",
+            "WIDTH": "00000000000000000000000000100000"
+          },
+          "attributes": {
+            "always_ff": "00000000000000000000000000000001",
+            "src": "/root/simulador_fpga/workspace/test_shifter2d.sv:11.5-16.8"
+          },
+          "port_directions": {
+            "ARST": "input",
+            "CLK": "input",
+            "D": "input",
+            "EN": "input",
+            "Q": "output"
+          },
+          "connections": {
+            "ARST": [ 3 ],
+            "CLK": [ 2 ],
+            "D": [ 4, 5, 6, 7, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40 ],
+            "EN": [ 8 ],
+            "Q": [ 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 9, 10, 11, 12 ]
+          }
+        }
+      },
+      "netnames": {
+        "aux": {
+          "hide_name": 0,
+          "bits": [ 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 9, 10, 11, 12 ],
+          "attributes": {
+            "src": "/root/simulador_fpga/workspace/test_shifter2d.sv:10.28-10.31"
+          }
+        },
+        "clk": {
+          "hide_name": 0,
+          "bits": [ 2 ],
+          "attributes": {
+            "src": "/root/simulador_fpga/workspace/test_shifter2d.sv:4.18-4.21"
+          }
+        },
+        "d_in": {
+          "hide_name": 0,
+          "bits": [ 4, 5, 6, 7 ],
+          "attributes": {
+            "src": "/root/simulador_fpga/workspace/test_shifter2d.sv:6.24-6.28"
+          }
+        },
+        "q_out": {
+          "hide_name": 0,
+          "bits": [ 9, 10, 11, 12 ],
+          "attributes": {
+            "src": "/root/simulador_fpga/workspace/test_shifter2d.sv:8.24-8.29"
+          }
+        },
+        "rst_n": {
+          "hide_name": 0,
+          "bits": [ 3 ],
+          "attributes": {
+            "src": "/root/simulador_fpga/workspace/test_shifter2d.sv:5.18-5.23"
+          }
+        },
+        "shift_en": {
+          "hide_name": 0,
+          "bits": [ 8 ],
+          "attributes": {
+            "src": "/root/simulador_fpga/workspace/test_shifter2d.sv:7.18-7.26"
+          }
+        }
+      }
+    }
+  }
+}

@@ -6,6 +6,90 @@
     let ws = null;
     let panZoomInstance = null;
 
+    function compactarValorParametro(rawValue) {
+        if (!rawValue) return '';
+        const valor = rawValue.trim();
+
+        let m = valor.match(/^(?:s?\d+)?'h([0-9a-fA-F_]+)$/);
+        if (m) {
+            return `0x${m[1].replace(/_/g, '').toUpperCase()}`;
+        }
+
+        m = valor.match(/^(?:s?\d+)?'d(-?\d+)$/i);
+        if (m) {
+            return m[1];
+        }
+
+        m = valor.match(/^(?:s?\d+)?'b([01_]+)$/i);
+        if (m) {
+            const bits = m[1].replace(/_/g, '');
+            try {
+                const dec = BigInt(`0b${bits}`);
+                const hex = dec.toString(16).toUpperCase();
+                return bits.length > 8 ? `0x${hex}` : `${dec}`;
+            } catch (_) {
+                return `0b${bits.slice(0, 16)}${bits.length > 16 ? '...' : ''}`;
+            }
+        }
+
+        // Algunos flujos de Yosys emiten binario como 32'0101... sin 'b explícita.
+        m = valor.match(/^(?:s?\d+)?'([01_]+)$/i);
+        if (m) {
+            const bits = m[1].replace(/_/g, '');
+            try {
+                const dec = BigInt(`0b${bits}`);
+                const hex = dec.toString(16).toUpperCase();
+                return bits.length > 8 ? `0x${hex}` : `${dec}`;
+            } catch (_) {
+                return `0b${bits.slice(0, 16)}${bits.length > 16 ? '...' : ''}`;
+            }
+        }
+
+        return valor.length > 20 ? `${valor.slice(0, 20)}...` : valor;
+    }
+
+    function compactarLiteralesEnTexto(texto) {
+        if (!texto) return '';
+        return texto.replace(/(?:s?\d+)?'(?:h[0-9a-fA-F_]+|d-?\d+|b[01_]+|[01_]+)/g, (lit) => compactarValorParametro(lit));
+    }
+
+    function nombreModuloVisible(moduleName) {
+        if (!moduleName) return '';
+
+        const limpio = moduleName.startsWith('\\') ? moduleName.slice(1) : moduleName;
+
+        if (limpio.startsWith('$paramod$')) {
+            const trozosHash = limpio.split('\\').filter(Boolean);
+            return compactarLiteralesEnTexto(trozosHash[trozosHash.length - 1] || limpio);
+        }
+
+        if (limpio.startsWith('$paramod')) {
+            const trozos = limpio.split('\\').filter(Boolean);
+            const base = trozos[1] || trozos[0] || limpio;
+            const params = [];
+            for (let i = 2; i < trozos.length; i++) {
+                const idx = trozos[i].indexOf('=');
+                if (idx > 0) {
+                    const k = trozos[i].slice(0, idx);
+                    const v = trozos[i].slice(idx + 1);
+                    params.push(`${k}=${compactarValorParametro(v)}`);
+                }
+            }
+            if (!params.length) return compactarLiteralesEnTexto(base);
+            const vista = params.slice(0, 2).join(', ');
+            return `${base}<${vista}${params.length > 2 ? ', ...' : ''}>`;
+        }
+
+        const normalized = limpio.split('\\').pop();
+        return compactarLiteralesEnTexto(normalized || limpio);
+    }
+
+    function esModuloJerarquico(moduleName, visualType) {
+        if (!moduleName || moduleName === 'generic') return false;
+        if (visualType !== 'generic') return false;
+        return !moduleName.startsWith('$_') && !moduleName.startsWith('$auto$');
+    }
+
     function cambiarEstadoBotones(bloquear) {
         const botones = document.querySelectorAll('.asm-btn');
         botones.forEach(btn => btn.disabled = bloquear);
@@ -39,7 +123,7 @@
         const hexC = document.getElementById('hex_container');
         if (hexC) {
             hexC.innerHTML = '';
-            for (let i = 5; i >= 0; i--) hexC.innerHTML += crearHEX(`HEX${i}`);
+            for (let i = 7; i >= 0; i--) hexC.innerHTML += crearHEX(`HEX${i}`);
         }
 
         const lrC = document.getElementById('ledr_container');
@@ -111,12 +195,19 @@
     input [9:0] SW,
     output [9:0] LEDR,
     output [9:0] LEDG,
-    output [6:0] HEX0, HEX1, HEX2, HEX3, HEX4, HEX5
+    output [6:0] HEX0, HEX1, HEX2, HEX3, HEX4, HEX5, HEX6, HEX7
 );
-    // Ejemplo: LED Rojo sigue a SW
+    // Ejemplo: LEDs y HEX reaccionan a los switches
     assign LEDR = SW;
     assign LEDG = ~SW; // LED Verde inverso
-    assign HEX0 = 7'b1000000; // Muestra un '0'
+    assign HEX0 = SW[0] ? 7'b1000000 : 7'b1111111;
+    assign HEX1 = SW[1] ? 7'b1111001 : 7'b1111111;
+    assign HEX2 = SW[2] ? 7'b0100100 : 7'b1111111;
+    assign HEX3 = SW[3] ? 7'b0110000 : 7'b1111111;
+    assign HEX4 = SW[4] ? 7'b0011001 : 7'b1111111;
+    assign HEX5 = SW[5] ? 7'b0010010 : 7'b1111111;
+    assign HEX6 = SW[6] ? 7'b0000010 : 7'b1111111;
+    assign HEX7 = SW[7] ? 7'b1111000 : 7'b1111111;
 endmodule`,
                 language: 'verilog',
                 theme: 'vs-dark',
@@ -235,6 +326,9 @@ endmodule`,
 
     function solicitarEsquema() {
         if (!ws || ws.readyState !== WebSocket.OPEN) return;
+        const selectorEngine = document.getElementById('asm-sintesis-engine');
+        const engine = selectorEngine ? selectorEngine.value : 'surelog_uhdm';
+
         const visor = document.getElementById('visor-esquema');
         if (visor) {
             visor.innerHTML = '<p style="text-align:center; color:#555; margin-top:230px;">⚙️ Sintetizando Jerarquía...</p>';
@@ -242,7 +336,8 @@ endmodule`,
         ws.send(JSON.stringify({
             accion: "ver_esquema",
             codigo: window.editor.getValue(),
-            modulo: "auto"
+            modulo: "auto",
+            motor: engine
         }));
     }
 
@@ -256,81 +351,31 @@ endmodule`,
         elementoSvg.style.width = "100%";
         elementoSvg.style.height = "100%";
 
-        const todosLosCables = elementoSvg.querySelectorAll('path, line');
-        todosLosCables.forEach(cable => {
-            const anchoAtributo = cable.getAttribute('stroke-width');
-            const anchoEstilo = cable.style.strokeWidth;
-            if (anchoAtributo === '2' || anchoEstilo === '2' || anchoEstilo === '2px') {
-                cable.classList.add('mi-bus-morado');
-            }
-        });
-
-        const estiloOriginal = elementoSvg.querySelector('style');
-        if (estiloOriginal) {
-            estiloOriginal.innerHTML = `
-                svg { stroke: #34495e; fill: none; }
-                path, line { stroke: #2980b9; stroke-width: 1.5px; }
-                path.mi-bus-morado, line.mi-bus-morado {
-                    stroke: #8e44ad !important;
-                    stroke-width: 3.5px !important;
-                }
-                text { fill: #2c3e50; font-family: 'Segoe UI', Tahoma, Arial, sans-serif; font-weight: bold; stroke: none; }
-                g[s\\:type="inputPort"] text, g[s\\:type="outputPort"] text { 
-                    font-size: 8px ; 
-                    font-weight: normal; 
-                    font-family: 'Courier New', monospace;
-                }
-                g[s\\:type="generic"] > text {
-                    font-size: 12px;
-                    fill: #0e6655;
-                }
-                circle:not([fill]) { fill: #2980b9; stroke: none; }
-                g[s\\:type="add"] line,
-                g[s\\:type="sub"] line,
-                g[s\\:type="eq"] line,
-                g[s\\:type="ne"] line,
-                g[s\\:type="lt"] line,
-                g[s\\:type="le"] line,
-                g[s\\:type="gt"] line,
-                g[s\\:type="ge"] line {
-                    stroke: #ffffff !important;
-                    stroke-width: 2px !important;
-                }
-                g[s\\:type="inputExt"] path, g[s\\:type="outputExt"] path { fill: #d6eaf8; stroke: #2980b9; stroke-width: 1.5px; }
-                g[s\\:type="inputExt"] text, g[s\\:type="outputExt"] text { fill: #154360; font-size: 16px; }
-                g[s\\:type="constant"] rect { fill: #e5e7e9; stroke: #95a5a6; stroke-width: 1.5px; }
-                g[s\\:type="constant"] text { fill: #7f8c8d; font-size: 11px; }
-                rect:not([fill]) { fill: #fcf3cf; stroke: #d4ac0d; stroke-width: 1.5px; }
-                polygon { fill: #f8f9f9; stroke: #34495e; stroke-width: 1.5px; }
-            `;
-        }
-
         const celdas = elementoSvg.querySelectorAll('g');
         celdas.forEach(celda => {
-            let tipoModulo = celda.getAttribute('s:type');
-            if (!tipoModulo) return;
+            const tipoVisual = celda.getAttribute('s:type');
+            const moduloExacto = celda.getAttribute('data-module');
+            let tipoModulo = moduloExacto || tipoVisual;
+            if (!tipoModulo && celda.getAttribute('s:generic') === 'body') {
+                const parent = celda.parentElement;
+                if (parent) tipoModulo = parent.getAttribute('s:type');
+            }
 
-            if (tipoModulo === 'generic') {
+            if (tipoVisual === 'generic') {
                 const textosCaja = celda.querySelectorAll('text');
                 if (textosCaja.length > 0) {
-                    tipoModulo = textosCaja[0].textContent.trim();
+                    const etiquetaOriginal = textosCaja[0].textContent.trim();
+                    if (!moduloExacto && etiquetaOriginal && etiquetaOriginal !== 'generic') {
+                        tipoModulo = etiquetaOriginal;
+                    }
+                    textosCaja[0].textContent = nombreModuloVisible(tipoModulo || etiquetaOriginal);
                     textosCaja[0].style.fontSize = '12px';
                     textosCaja[0].style.fontWeight = 'bold';
                     textosCaja[0].style.fill = '#0e6655';
-
-                    for (let i = 1; i < textosCaja.length; i++) {
-                        textosCaja[i].style.fontSize = '8px';
-                        textosCaja[i].style.fontFamily = "'Courier New', monospace";
-                        textosCaja[i].style.fontWeight = 'normal';
-                        textosCaja[i].style.fill = '#2c3e50';
-                        const xActual = parseFloat(textosCaja[i].getAttribute('x'));
-                        textosCaja[i].setAttribute('x', xActual > 0 ? xActual - 2 : xActual + 2);
-                    }
                 }
             }
 
-            const ignorar = ['inputExt', 'outputExt', 'inputPort', 'outputPort', 'constant', 'split', 'join', 'generic'];
-            if (!ignorar.includes(tipoModulo) && !tipoModulo.startsWith('$')) {
+            if (esModuloJerarquico(tipoModulo, tipoVisual)) {
                 const rect = celda.querySelector('rect');
                 if (rect) {
                     rect.style.fill = '#e8f8f5';
@@ -339,11 +384,15 @@ endmodule`,
                 }
 
                 const titulo = document.createElementNS("http://www.w3.org/2000/svg", "title");
-                titulo.textContent = "🖱️ Doble clic para entrar al módulo: " + tipoModulo;
+                titulo.textContent = "🖱️ Doble clic para entrar al módulo: " + nombreModuloVisible(tipoModulo);
                 celda.appendChild(titulo);
 
                 celda.addEventListener('dblclick', (e) => {
                     e.stopPropagation();
+                    e.preventDefault();
+                    const selectorEngine = document.getElementById('asm-sintesis-engine');
+                    const engine = selectorEngine ? selectorEngine.value : 'surelog_uhdm';
+
                     if (contenedor) {
                         contenedor.innerHTML = `<p style="text-align:center; color:#555; margin-top:230px;">🔍 Entrando al submódulo ${tipoModulo}...</p>`;
                     }
@@ -351,7 +400,8 @@ endmodule`,
                         ws.send(JSON.stringify({
                             accion: "ver_esquema",
                             codigo: window.editor.getValue(),
-                            modulo: tipoModulo
+                            modulo: tipoModulo,
+                            motor: engine
                         }));
                     }
                 });
@@ -364,6 +414,7 @@ endmodule`,
             controlIconsEnabled: true,
             fit: true,
             center: true,
+            dblClickZoomEnabled: false,
             minZoom: 0.5,
             maxZoom: 15
         });

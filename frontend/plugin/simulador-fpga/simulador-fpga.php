@@ -30,7 +30,7 @@ class SimuladorFPGA_Plugin {
             'simulador-fpga-editor',
             plugin_dir_url(__FILE__) . 'assets/js/editor.js',
             array('svg-pan-zoom'),
-            '5.3.1',
+            '5.3.2_' . time(),
             true
         );
 
@@ -128,9 +128,15 @@ class SimuladorFPGA_Plugin {
                         <span id="fpga-btn-simular-texto">▶️ Simular</span>
                     </button>
 
+                    <!-- Selector de Motor de Síntesis -->
+                    <select id="fpga-sintesis-engine" class="sim-btn" style="background-color: #34495e; color: white; border: 1px solid #555; padding: 6px 10px; cursor: pointer; font-size: 13px; border-radius: 4px; outline: none;">
+                        <option value="yosys" selected>⚡ Yosys Nativo</option>
+                        <option value="surelog_uhdm">🚀 Surelog + UHDM (Avanzado)</option>
+                    </select>
+
                     <!-- Botón Yosys -->
                     <button id="fpga-btn-ver-esquema" class="sim-btn" style="background-color: #8e44ad; color: white;">
-                        👁️ Sintetizar (Yosys)
+                        👁️ Sintetizar
                     </button>
 
                 </div>

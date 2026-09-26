@@ -13,8 +13,6 @@ if (!defined('ABSPATH')) {
 class SimuladorASM_Plugin {
 
     public function __construct() {
-        add_shortcode('simulador_asm', array($this, 'render_shortcode'));
-        add_action('wp_enqueue_scripts', array($this, 'enqueue_assets'));
     }
 
     public function enqueue_assets() {
@@ -38,7 +36,7 @@ class SimuladorASM_Plugin {
             'simulador-asm-editor',
             plugin_dir_url(__FILE__) . 'assets/js/editor-asm.js',
             array('svg-pan-zoom', 'monaco-loader'),
-            '1.0.0',
+            filemtime(plugin_dir_path(__FILE__) . 'assets/js/editor-asm.js'),
             true
         );
 
@@ -48,6 +46,7 @@ class SimuladorASM_Plugin {
     }
 
     public function render_shortcode() {
+        $this->enqueue_assets();
         ob_start();
         ?>
         <style>
@@ -98,9 +97,15 @@ class SimuladorASM_Plugin {
             <div style="border: 2px solid #333; border-radius: 8px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
                 <div style="background-color: #2c3e50; color: white; padding: 12px; font-weight: bold; display: flex; justify-content: space-between; align-items: center;">
                     <span>🎨 Esquema Sintetizado (Yosys RTL)</span>
-                    <button id="btn-ver-esquema" class="asm-btn" style="background-color: #0073aa; color: white; padding: 6px 12px;">
-                        👁️ Ver Esquema de Hardware
-                    </button>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <select id="asm-sintesis-engine" class="asm-btn" style="background-color: #34495e; color: white; border: 1px solid #555; padding: 6px 10px; cursor: pointer; font-size: 13px; border-radius: 4px; outline: none;">
+                            <option value="yosys">⚡ Yosys Nativo</option>
+                            <option value="surelog_uhdm" selected>🚀 Synlig + Yosys (Avanzado)</option>
+                        </select>
+                        <button id="btn-ver-esquema" class="asm-btn" style="background-color: #0073aa; color: white; padding: 6px 12px;">
+                            👁️ Ver Esquema de Hardware
+                        </button>
+                    </div>
                 </div>
                 <!-- La pizarra interactiva -->
                 <div id="visor-esquema" style="width: 100%; height: 500px; border-top: 1px solid #ccc; background-color: #fafafa; overflow: hidden; position: relative;">
@@ -135,7 +140,7 @@ class SimuladorASM_Plugin {
                     </div>
                     
                     <!-- Displays de 7 Segmentos HEX -->
-                    <div id="hex_container" style="display: flex; justify-content: space-around; background: #1a252f; padding: 20px; border-radius: 8px; margin-bottom: 25px; border: 1px solid #34495e;">
+                    <div id="hex_container" style="display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; background: #1a252f; padding: 20px; border-radius: 8px; margin-bottom: 25px; border: 1px solid #34495e;">
                     </div>
                     
                     <!-- Leds de la placa -->

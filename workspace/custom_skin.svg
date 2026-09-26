@@ -317,6 +317,18 @@ line[class*=","] {
   <g s:type="$adff" s:width="40" s:height="57">
     <s:alias val="$adff"/>
     <s:alias val="$adffe"/>
+    <s:alias val="$dffe"/>
+    <s:alias val="$sdff"/>
+    <s:alias val="$sdffe"/>
+    <s:alias val="$sdffce"/>
+    <s:alias val="$_DFF_P_"/>
+    <s:alias val="$_DFF_N_"/>
+    <s:alias val="$_DFF_PN0_"/>
+    <s:alias val="$_DFF_PP0_"/>
+    <s:alias val="$_DFFE_PN0P_"/>
+    <s:alias val="$_DFFE_PP0P_"/>
+    <s:alias val="$_DFFE_PN0N_"/>
+    <s:alias val="$_DFFE_PP0N_"/>
     <!-- Cuerpo del Flip-Flop -->
     <rect class="netlistsvg_cell" x="0" y="0" width="40" height="50" rx="2" ry="2" fill="#81C784"/>
 
@@ -330,6 +342,7 @@ line[class*=","] {
     <text class="netlistsvg_text" x="20" y="8" text-anchor="middle" font-size="6px" font-weight="bold">DFF</text>
     <text class="netlistsvg_text" x="5" y="15" font-size="6px">D</text>
     <text class="netlistsvg_text" x="8" y="28" font-size="6px">CLK</text>
+    <text class="netlistsvg_text" x="5" y="38" font-size="6px">EN</text>
     <text class="netlistsvg_text" x="20" y="46" text-anchor="middle" font-size="5px">ARST</text>
     <text class="netlistsvg_text" x="34" y="15" text-anchor="end" font-size="6px">Q</text>
 
@@ -337,8 +350,11 @@ line[class*=","] {
     <g s:x="0"  s:y="12" s:pid="D"/>
     <g s:x="0"  s:y="26" s:pid="CLK"/>
     <g s:x="0"  s:y="26" s:pid="C"/>
+    <g s:x="0"  s:y="38" s:pid="EN"/>
+    <g s:x="0"  s:y="38" s:pid="E"/>
     <g s:x="20" s:y="57" s:pid="ARST"/>
     <g s:x="20" s:y="57" s:pid="CLR"/>
+    <g s:x="20" s:y="57" s:pid="R"/>
     <g s:x="40" s:y="12" s:pid="Q"/>
   </g>
 

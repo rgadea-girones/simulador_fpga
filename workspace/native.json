@@ -1,0 +1,261 @@
+{
+  "creator": "Yosys 0.9 (git sha1 1979e0b)",
+  "modules": {
+    "counter": {
+      "attributes": {
+        "top": 1,
+        "src": "test_counter.sv:1"
+      },
+      "ports": {
+        "clk": {
+          "direction": "input",
+          "bits": [ 2 ]
+        },
+        "rst_n": {
+          "direction": "input",
+          "bits": [ 3 ]
+        },
+        "enable": {
+          "direction": "input",
+          "bits": [ 4 ]
+        },
+        "count": {
+          "direction": "output",
+          "bits": [ 5, 6, 7, 8 ]
+        }
+      },
+      "cells": {
+        "$abc$114$auto$blifparse.cc:371:parse_blif$115": {
+          "hide_name": 1,
+          "type": "$_NOT_",
+          "parameters": {
+          },
+          "attributes": {
+          },
+          "port_directions": {
+            "A": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 5 ],
+            "Y": [ 9 ]
+          }
+        },
+        "$abc$114$auto$blifparse.cc:371:parse_blif$116": {
+          "hide_name": 1,
+          "type": "$_AND_",
+          "parameters": {
+          },
+          "attributes": {
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 6 ],
+            "B": [ 5 ],
+            "Y": [ 10 ]
+          }
+        },
+        "$abc$114$auto$blifparse.cc:371:parse_blif$117": {
+          "hide_name": 1,
+          "type": "$_XOR_",
+          "parameters": {
+          },
+          "attributes": {
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 6 ],
+            "B": [ 5 ],
+            "Y": [ 11 ]
+          }
+        },
+        "$abc$114$auto$blifparse.cc:371:parse_blif$118": {
+          "hide_name": 1,
+          "type": "$_AND_",
+          "parameters": {
+          },
+          "attributes": {
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 7 ],
+            "B": [ 10 ],
+            "Y": [ 12 ]
+          }
+        },
+        "$abc$114$auto$blifparse.cc:371:parse_blif$119": {
+          "hide_name": 1,
+          "type": "$_XOR_",
+          "parameters": {
+          },
+          "attributes": {
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 7 ],
+            "B": [ 10 ],
+            "Y": [ 13 ]
+          }
+        },
+        "$abc$114$auto$blifparse.cc:371:parse_blif$120": {
+          "hide_name": 1,
+          "type": "$_XOR_",
+          "parameters": {
+          },
+          "attributes": {
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 8 ],
+            "B": [ 12 ],
+            "Y": [ 14 ]
+          }
+        },
+        "$procdff$6": {
+          "hide_name": 1,
+          "type": "$adff",
+          "parameters": {
+            "ARST_POLARITY": 0,
+            "ARST_VALUE": 0,
+            "CLK_POLARITY": 1,
+            "WIDTH": 4
+          },
+          "attributes": {
+            "src": "test_counter.sv:7"
+          },
+          "port_directions": {
+            "ARST": "input",
+            "CLK": "input",
+            "D": "input",
+            "Q": "output"
+          },
+          "connections": {
+            "ARST": [ 3 ],
+            "CLK": [ 2 ],
+            "D": [ 15, 16, 17, 18 ],
+            "Q": [ 5, 6, 7, 8 ]
+          }
+        },
+        "$procmux$4": {
+          "hide_name": 1,
+          "type": "$mux",
+          "parameters": {
+            "WIDTH": 4
+          },
+          "attributes": {
+            "src": "test_counter.sv:10"
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "S": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 5, 6, 7, 8 ],
+            "B": [ 9, 11, 13, 14 ],
+            "S": [ 4 ],
+            "Y": [ 15, 16, 17, 18 ]
+          }
+        }
+      },
+      "netnames": {
+        "$0\\count[3:0]": {
+          "hide_name": 1,
+          "bits": [ 15, 16, 17, 18 ],
+          "attributes": {
+            "src": "test_counter.sv:7"
+          }
+        },
+        "$abc$114$add$test_counter.sv:11$3_Y[0]": {
+          "hide_name": 1,
+          "bits": [ 9 ],
+          "attributes": {
+            "src": "test_counter.sv:11"
+          }
+        },
+        "$abc$114$add$test_counter.sv:11$3_Y[1]": {
+          "hide_name": 1,
+          "bits": [ 11 ],
+          "attributes": {
+            "src": "test_counter.sv:11"
+          }
+        },
+        "$abc$114$add$test_counter.sv:11$3_Y[2]": {
+          "hide_name": 1,
+          "bits": [ 13 ],
+          "attributes": {
+            "src": "test_counter.sv:11"
+          }
+        },
+        "$abc$114$add$test_counter.sv:11$3_Y[3]": {
+          "hide_name": 1,
+          "bits": [ 14 ],
+          "attributes": {
+            "src": "test_counter.sv:11"
+          }
+        },
+        "$abc$114$new_n10_": {
+          "hide_name": 1,
+          "bits": [ 10 ],
+          "attributes": {
+          }
+        },
+        "$abc$114$new_n12_": {
+          "hide_name": 1,
+          "bits": [ 12 ],
+          "attributes": {
+          }
+        },
+        "clk": {
+          "hide_name": 0,
+          "bits": [ 2 ],
+          "attributes": {
+            "src": "test_counter.sv:2"
+          }
+        },
+        "count": {
+          "hide_name": 0,
+          "bits": [ 5, 6, 7, 8 ],
+          "attributes": {
+            "src": "test_counter.sv:5"
+          }
+        },
+        "enable": {
+          "hide_name": 0,
+          "bits": [ 4 ],
+          "attributes": {
+            "src": "test_counter.sv:4"
+          }
+        },
+        "rst_n": {
+          "hide_name": 0,
+          "bits": [ 3 ],
+          "attributes": {
+            "src": "test_counter.sv:3"
+          }
+        }
+      }
+    }
+  }
+}

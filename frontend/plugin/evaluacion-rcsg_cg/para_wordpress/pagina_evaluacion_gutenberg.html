@@ -1,0 +1,75 @@
+<!-- wp:group {"style":{"spacing":{"padding":{"top":"32px","right":"24px","bottom":"32px","left":"24px"}},"color":{"background":"#f4f8fb"},"border":{"radius":"12px"}},"layout":{"type":"constrained","contentSize":"1100px"}} -->
+<div class="wp-block-group" style="border-radius:12px;background-color:#f4f8fb;padding-top:32px;padding-right:24px;padding-bottom:32px;padding-left:24px">
+  <!-- wp:heading {"level":1} -->
+  <h1>Evaluacion Automatizada de Contadores up/down modulo 13</h1>
+  <!-- /wp:heading -->
+
+  <!-- wp:paragraph -->
+  <p>Especificacion funcional del contador que debe analizarse en la evaluacion.</p>
+  <!-- /wp:paragraph -->
+
+  <!-- wp:heading {"level":3} -->
+  <h3>Modos de funcionamiento</h3>
+  <!-- /wp:heading -->
+
+  <!-- wp:list -->
+  <ul>
+    <li>El contador es modulo 13, por lo que solo admite estados validos entre 0 y 12.</li>
+    <li>Con <strong>enable = 1</strong> y <strong>updown = 1</strong> cuenta hacia arriba.</li>
+    <li>Con <strong>enable = 1</strong> y <strong>updown = 0</strong> cuenta hacia abajo.</li>
+    <li>Con <strong>enable = 0</strong> el valor de <strong>count</strong> debe permanecer estable.</li>
+    <li>En conteo ascendente, despues de 12 el siguiente valor debe ser 0.</li>
+    <li>En conteo descendente, despues de 0 el siguiente valor debe ser 12.</li>
+  </ul>
+  <!-- /wp:list -->
+
+  <!-- wp:heading {"level":3} -->
+  <h3>Niveles de activacion y priorizacion</h3>
+  <!-- /wp:heading -->
+
+  <!-- wp:list -->
+  <ul>
+    <li><strong>areset_n</strong> es un reset asincrono activo a nivel bajo.</li>
+    <li><strong>reset_n</strong> es un reset sincronico activo a nivel bajo.</li>
+    <li>La prioridad esperada es: primero <strong>areset_n</strong>, despues <strong>reset_n</strong> y por ultimo la logica de conteo habilitada por <strong>enable</strong>.</li>
+    <li>Si <strong>areset_n = 0</strong>, el contador debe ir inmediatamente a 0.</li>
+    <li>Si <strong>areset_n = 1</strong> y <strong>reset_n = 0</strong>, el contador debe colocarse en 0 en el flanco activo de reloj.</li>
+  </ul>
+  <!-- /wp:list -->
+
+  <!-- wp:heading {"level":3} -->
+  <h3>Caracteristicas de terminal count</h3>
+  <!-- /wp:heading -->
+
+  <!-- wp:list -->
+  <ul>
+    <li><strong>terminal_count_free</strong> indica que el contador se encuentra en el extremo terminal segun la direccion de conteo.</li>
+    <li>En subida, el extremo terminal es <strong>count = 12</strong>.</li>
+    <li>En bajada, el extremo terminal es <strong>count = 0</strong>.</li>
+    <li><strong>terminal_count_free</strong> no depende de <strong>enable</strong>; solo depende del valor actual de <strong>count</strong> y de la direccion <strong>updown</strong>.</li>
+    <li><strong>terminal_count_en</strong> representa el mismo evento terminal, pero condicionado por <strong>enable = 1</strong>.</li>
+    <li>Por tanto, <strong>terminal_count_en</strong> solo puede activarse cuando el contador esta en su valor terminal correspondiente y ademas <strong>enable</strong> esta activo.</li>
+  </ul>
+  <!-- /wp:list -->
+</div>
+<!-- /wp:group -->
+
+<!-- wp:spacer {"height":"24px"} -->
+<div style="height:24px" aria-hidden="true" class="wp-block-spacer"></div>
+<!-- /wp:spacer -->
+
+<!-- wp:group {"layout":{"type":"constrained","contentSize":"1100px"}} -->
+<div class="wp-block-group">
+  <!-- wp:heading {"level":3} -->
+  <h3>Evaluador interactivo</h3>
+  <!-- /wp:heading -->
+
+  <!-- wp:paragraph -->
+  <p>El alumno completa sus datos, revisa el contador asignado, marca si es correcto, escribe su asercion en un testbench completo y luego envia.</p>
+  <!-- /wp:paragraph -->
+
+  <!-- wp:shortcode -->
+  [evaluacion_aserciones]
+  <!-- /wp:shortcode -->
+</div>
+<!-- /wp:group -->

@@ -1,0 +1,10 @@
+read_systemverilog test_counter.sv
+hierarchy -auto-top
+proc
+opt_dff
+dfflegalize -cell $_DFF_P_ 0 -cell $_ADFF_PN0_ 0
+techmap * t:$dff %d t:$adff %d t:$mux %d
+opt
+abc -g AND,OR,XOR
+opt_clean
+write_json dff_unmap.json

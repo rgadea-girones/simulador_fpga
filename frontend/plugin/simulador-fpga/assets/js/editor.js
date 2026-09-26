@@ -792,6 +792,9 @@ endmodule`
             const codeDesign = obtenerCodigo(iframeDesign);
             if (!ws || ws.readyState !== WebSocket.OPEN || !codeDesign) return;
 
+            const selectorEngine = document.getElementById('fpga-sintesis-engine');
+            const engine = selectorEngine ? selectorEngine.value : 'yosys';
+
             const visor = document.getElementById('fpga-visor-esquema');
             if (visor) {
                 visor.innerHTML = '<p style="text-align:center; color:#555; margin-top:170px;">⚙️ Sintetizando Jerarquía...</p>';
@@ -800,7 +803,8 @@ endmodule`
             ws.send(JSON.stringify({
                 accion: "ver_esquema",
                 codigo: codeDesign,
-                modulo: "auto"
+                modulo: "auto",
+                motor: engine
             }));
         }
 
@@ -814,6 +818,54 @@ endmodule`
 
             elementoSvg.style.width = "100%";
             elementoSvg.style.height = "100%";
+
+            const celdas = elementoSvg.querySelectorAll('g');
+            celdas.forEach(celda => {
+                let tipoModulo = celda.getAttribute('s:type');
+                if (!tipoModulo && celda.getAttribute('s:generic') === 'body') {
+                    const parent = celda.parentElement;
+                    if (parent) tipoModulo = parent.getAttribute('s:type');
+                }
+
+                if (tipoModulo === 'generic') {
+                    const textosCaja = celda.querySelectorAll('text');
+                    if (textosCaja.length > 0) {
+                        tipoModulo = textosCaja[0].textContent.trim();
+                    }
+                }
+
+                const ignorar = ['inputExt', 'outputExt', 'inputPort', 'outputPort', 'constant', 'split', 'join', 'generic', 'mux', 'and', 'nand', 'or', 'nor', 'xor', 'xnor', 'not', 'add', 'sub', 'eq', 'ne', 'lt', 'le', 'gt', 'ge', 'dff', 'dffn', 'dlatch'];
+                if (tipoModulo && !ignorar.includes(tipoModulo) && !tipoModulo.startsWith('$')) {
+                    const rect = celda.querySelector('rect');
+                    if (rect) {
+                        rect.style.fill = '#e8f8f5';
+                        rect.style.stroke = '#1abc9c';
+                        rect.style.cursor = 'pointer';
+                    }
+
+                    const titulo = document.createElementNS("http://www.w3.org/2000/svg", "title");
+                    titulo.textContent = "🖱️ Doble clic para entrar al módulo: " + tipoModulo;
+                    celda.appendChild(titulo);
+
+                    celda.addEventListener('dblclick', (e) => {
+                        e.stopPropagation();
+                        const selectorEngine = document.getElementById('fpga-sintesis-engine');
+                        const engine = selectorEngine ? selectorEngine.value : 'yosys';
+
+                        if (contenedor) {
+                            contenedor.innerHTML = `<p style="text-align:center; color:#555; margin-top:170px;">🔍 Entrando al submódulo ${tipoModulo}...</p>`;
+                        }
+                        if (ws && ws.readyState === WebSocket.OPEN) {
+                            ws.send(JSON.stringify({
+                                accion: "ver_esquema",
+                                codigo: window.editor ? window.editor.getValue() : "",
+                                modulo: tipoModulo,
+                                motor: engine
+                            }));
+                        }
+                    });
+                }
+            });
 
             if (panZoomInstance) panZoomInstance.destroy();
             if (typeof svgPanZoom !== 'undefined') {

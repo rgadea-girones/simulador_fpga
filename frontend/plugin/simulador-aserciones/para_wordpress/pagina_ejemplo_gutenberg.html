@@ -1,0 +1,144 @@
+<!-- wp:group {"style":{"spacing":{"padding":{"top":"32px","right":"24px","bottom":"32px","left":"24px"}},"color":{"background":"#f4f8fb"},"border":{"radius":"12px"}},"layout":{"type":"constrained","contentSize":"1100px"}} -->
+<div class="wp-block-group" style="border-radius:12px;background-color:#f4f8fb;padding-top:32px;padding-right:24px;padding-bottom:32px;padding-left:24px">
+  <!-- wp:heading {"level":1} -->
+  <h1>Banco de Ejemplos SVA en SystemVerilog</h1>
+  <!-- /wp:heading -->
+
+  <!-- wp:paragraph -->
+  <p>Esta pagina reune ejemplos progresivos de aserciones concurrentes y permite ejecutarlos en el simulador integrado. Se ha retirado la identificacion de alumno y la autoevaluacion.</p>
+  <!-- /wp:paragraph -->
+
+  <!-- wp:list {"ordered":true} -->
+  <ol>
+    <li>Ejemplos basicos</li>
+    <li>Ejemplos intermedios</li>
+    <li>Ejemplos avanzados</li>
+  </ol>
+  <!-- /wp:list -->
+</div>
+<!-- /wp:group -->
+
+<!-- wp:spacer {"height":"24px"} -->
+<div style="height:24px" aria-hidden="true" class="wp-block-spacer"></div>
+<!-- /wp:spacer -->
+
+<!-- wp:group {"style":{"spacing":{"padding":{"top":"20px","right":"20px","bottom":"20px","left":"20px"}},"border":{"radius":"12px","color":"#d7e3ee","width":"1px"}},"layout":{"type":"constrained","contentSize":"1100px"}} -->
+<div class="wp-block-group" style="border-color:#d7e3ee;border-width:1px;border-radius:12px;padding-top:20px;padding-right:20px;padding-bottom:20px;padding-left:20px">
+  <!-- wp:heading {"level":3} -->
+  <h3>Ventana de Simulacion</h3>
+  <!-- /wp:heading -->
+
+  <!-- wp:paragraph -->
+  <p>Se mantiene la carga y ejecucion de ejemplos en simulador. Usa el catalogo del bloque interactivo para cargar testbench.sv y design.sv con un clic.</p>
+  <!-- /wp:paragraph -->
+
+  <!-- wp:shortcode -->
+  [simulador_aserciones]
+  <!-- /wp:shortcode -->
+</div>
+<!-- /wp:group -->
+
+<!-- wp:spacer {"height":"24px"} -->
+<div style="height:24px" aria-hidden="true" class="wp-block-spacer"></div>
+<!-- /wp:spacer -->
+
+<!-- wp:group {"layout":{"type":"constrained","contentSize":"1100px"}} -->
+<div class="wp-block-group">
+  <!-- wp:heading {"level":3} -->
+  <h3>Ejemplos Basicos</h3>
+  <!-- /wp:heading -->
+
+  <!-- wp:details -->
+  <details>
+    <summary>B1 - Req/Ack exacto a 2 ciclos</summary>
+    <p><strong>Objetivo:</strong> validar latencia fija con implicacion solapada.</p>
+    <pre><code>assert property (@(posedge clk)
+  disable iff(!rst_n)
+  req |-> ##2 ack
+);</code></pre>
+  </details>
+  <!-- /wp:details -->
+
+  <!-- wp:details -->
+  <details>
+    <summary>B2 - Reset limpia salida al ciclo siguiente</summary>
+    <p><strong>Objetivo:</strong> comprobar comportamiento inmediatamente posterior al reset.</p>
+    <pre><code>assert property (@(posedge clk)
+  $rose(rst_n) |=> !error_flag
+);</code></pre>
+  </details>
+  <!-- /wp:details -->
+</div>
+<!-- /wp:group -->
+
+<!-- wp:spacer {"height":"24px"} -->
+<div style="height:24px" aria-hidden="true" class="wp-block-spacer"></div>
+<!-- /wp:spacer -->
+
+<!-- wp:group {"style":{"spacing":{"padding":{"top":"20px","right":"20px","bottom":"20px","left":"20px"}},"border":{"radius":"12px","color":"#d7e3ee","width":"1px"}},"layout":{"type":"constrained","contentSize":"1100px"}} -->
+<div class="wp-block-group" style="border-color:#d7e3ee;border-width:1px;border-radius:12px;padding-top:20px;padding-right:20px;padding-bottom:20px;padding-left:20px">
+  <!-- wp:heading {"level":3} -->
+  <h3>Ejemplos Intermedios</h3>
+  <!-- /wp:heading -->
+
+  <!-- wp:paragraph -->
+  <p>Uso de ventanas temporales y secuencias de varios eventos.</p>
+  <!-- /wp:paragraph -->
+
+  <!-- wp:details -->
+  <details>
+    <summary>I1 - ACK dentro de una ventana de 1 a 3 ciclos</summary>
+    <pre><code>assert property (@(posedge clk)
+  disable iff(!rst_n)
+  req |-> ##[1:3] ack
+);</code></pre>
+  </details>
+  <!-- /wp:details -->
+
+  <!-- wp:details -->
+  <details>
+    <summary>I2 - Inicio de transferencia seguido de done</summary>
+    <pre><code>sequence start_to_done;
+  $rose(start) ##[2:6] done;
+endsequence
+
+assert property (@(posedge clk)
+  disable iff(!rst_n)
+  start_to_done
+);</code></pre>
+  </details>
+  <!-- /wp:details -->
+</div>
+<!-- /wp:group -->
+
+<!-- wp:spacer {"height":"24px"} -->
+<div style="height:24px" aria-hidden="true" class="wp-block-spacer"></div>
+<!-- /wp:spacer -->
+
+<!-- wp:group {"style":{"color":{"background":"#1f2937","text":"#ffffff"},"spacing":{"padding":{"top":"20px","right":"20px","bottom":"20px","left":"20px"}},"border":{"radius":"12px"}},"layout":{"type":"constrained","contentSize":"1100px"}} -->
+<div class="wp-block-group has-text-color has-background" style="border-radius:12px;color:#ffffff;background-color:#1f2937;padding-top:20px;padding-right:20px;padding-bottom:20px;padding-left:20px">
+  <!-- wp:heading {"level":4,"textColor":"white"} -->
+  <h4 class="has-white-color has-text-color">Ejemplos Avanzados</h4>
+  <!-- /wp:heading -->
+
+  <!-- wp:details -->
+  <details>
+    <summary>A1 - first_match para primera respuesta valida</summary>
+    <pre><code>assert property (@(posedge clk)
+  disable iff(!rst_n)
+  req |-> first_match(##[1:5] grant)
+);</code></pre>
+  </details>
+  <!-- /wp:details -->
+
+  <!-- wp:details -->
+  <details>
+    <summary>A2 - estabilidad de bus durante transaccion</summary>
+    <pre><code>assert property (@(posedge clk)
+  disable iff(!rst_n)
+  valid |-> $stable(data) throughout ready[->1]
+);</code></pre>
+  </details>
+  <!-- /wp:details -->
+</div>
+<!-- /wp:group -->
